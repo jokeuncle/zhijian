@@ -73,7 +73,7 @@ JSON
 codex mcp add zhijian -- "$PWD/scripts/zhijian" mcp
 ```
 
-该命令会向 Codex 注册本地工具；本次开发没有改写用户全局 Codex 配置。仓库也提供 `.codex/config.toml`，供支持并信任项目配置的 Codex 客户端使用；本机 `codex mcp get zhijian` 尚未自动发现该项目配置，所以不将“配置文件存在”视作“全局连接已完成”。CLI 已可直接使用，MCP 的实际 stdio 连接已由独立客户端验收。
+该命令会向当前用户的 Codex 注册本地工具；执行后可用 `codex mcp get zhijian` 检查。下载安装版请优先使用应用内生成的命令，并先把应用放到固定安装位置。仓库也提供 `.codex/config.toml`，供支持并信任项目配置的客户端使用；项目配置是否加载，以客户端实际结果为准。CLI 与 MCP 的实际 stdio 连接均有独立进程验收。
 
 工具包括 `search_entries`、`get_entry`、`create_entry`、`update_entry`、`delete_entry`、`restore_entry`、`review_entry`、`list_collections`、`get_history`、`revert_entry`、`import_entries`、`library_stats`。现有词条的写操作需要 `expected_revision`；冲突会返回错误，避免覆盖其他窗口或 Agent 的新内容。
 
