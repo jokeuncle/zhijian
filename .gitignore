@@ -1,5 +1,7 @@
 .build/
+.build-intel/
 build/
+dist/
 .DS_Store
 .swiftpm/
 *.sqlite*

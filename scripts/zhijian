@@ -1,0 +1,8 @@
+#!/bin/zsh
+set -euo pipefail
+TASK_ROOT="${0:A:h:h}"
+TASK_CLI="$TASK_ROOT/build/知间.app/Contents/MacOS/zhijian"
+if [[ ! -x "$TASK_CLI" ]]; then
+    "$TASK_ROOT/scripts/build.sh" >&2
+fi
+exec "$TASK_CLI" "$@"

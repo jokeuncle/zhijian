@@ -1,0 +1,679 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-14T17:40:10Z",
+  "title": "Design System: 知间",
+  "extensions": {
+    "platform": "macOS",
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Moss",
+        "nativeToken": "Palette.accent",
+        "appearance": "light",
+        "appearancePair": "accent-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.05502 156.65)",
+          "oklch(26.43% 0.05502 156.65)",
+          "oklch(37.86% 0.05502 156.65)",
+          "oklch(49.29% 0.05502 156.65)",
+          "oklch(60.71% 0.05502 156.65)",
+          "oklch(72.14% 0.05502 156.65)",
+          "oklch(83.57% 0.05502 156.65)",
+          "oklch(95.00% 0.05502 156.65)"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Moss — Dark",
+        "nativeToken": "Palette.accent",
+        "appearance": "dark",
+        "appearancePair": "accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.05738 141.83)",
+          "oklch(26.43% 0.05738 141.83)",
+          "oklch(37.86% 0.05738 141.83)",
+          "oklch(49.29% 0.05738 141.83)",
+          "oklch(60.71% 0.05738 141.83)",
+          "oklch(72.14% 0.05738 141.83)",
+          "oklch(83.57% 0.05738 141.83)",
+          "oklch(95.00% 0.05738 141.83)"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Moss",
+        "nativeToken": "Palette.onAccent",
+        "appearance": "light",
+        "appearancePair": "on-accent-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.00000 0.00)",
+          "oklch(26.43% 0.00000 0.00)",
+          "oklch(37.86% 0.00000 0.00)",
+          "oklch(49.29% 0.00000 0.00)",
+          "oklch(60.71% 0.00000 0.00)",
+          "oklch(72.14% 0.00000 0.00)",
+          "oklch(83.57% 0.00000 0.00)",
+          "oklch(95.00% 0.00000 0.00)"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "primary",
+        "displayName": "On Moss — Dark",
+        "nativeToken": "Palette.onAccent",
+        "appearance": "dark",
+        "appearancePair": "on-accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.02908 152.29)",
+          "oklch(26.43% 0.02908 152.29)",
+          "oklch(37.86% 0.02908 152.29)",
+          "oklch(49.29% 0.02908 152.29)",
+          "oklch(60.71% 0.02908 152.29)",
+          "oklch(72.14% 0.02908 152.29)",
+          "oklch(83.57% 0.02908 152.29)",
+          "oklch(95.00% 0.02908 152.29)"
+        ]
+      },
+      "rust": {
+        "role": "secondary",
+        "displayName": "Rust",
+        "nativeToken": "Palette.rust",
+        "appearance": "light",
+        "appearancePair": "rust-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.10074 40.84)",
+          "oklch(26.43% 0.10074 40.84)",
+          "oklch(37.86% 0.10074 40.84)",
+          "oklch(49.29% 0.10074 40.84)",
+          "oklch(60.71% 0.10074 40.84)",
+          "oklch(72.14% 0.10074 40.84)",
+          "oklch(83.57% 0.10074 40.84)",
+          "oklch(95.00% 0.10074 40.84)"
+        ]
+      },
+      "rust-dark": {
+        "role": "secondary",
+        "displayName": "Rust — Dark",
+        "nativeToken": "Palette.rust",
+        "appearance": "dark",
+        "appearancePair": "rust",
+        "tonalRamp": [
+          "oklch(15.00% 0.07860 48.94)",
+          "oklch(26.43% 0.07860 48.94)",
+          "oklch(37.86% 0.07860 48.94)",
+          "oklch(49.29% 0.07860 48.94)",
+          "oklch(60.71% 0.07860 48.94)",
+          "oklch(72.14% 0.07860 48.94)",
+          "oklch(83.57% 0.07860 48.94)",
+          "oklch(95.00% 0.07860 48.94)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "nativeToken": "Palette.paper",
+        "appearance": "light",
+        "appearancePair": "paper-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.00538 95.10)",
+          "oklch(26.43% 0.00538 95.10)",
+          "oklch(37.86% 0.00538 95.10)",
+          "oklch(49.29% 0.00538 95.10)",
+          "oklch(60.71% 0.00538 95.10)",
+          "oklch(72.14% 0.00538 95.10)",
+          "oklch(83.57% 0.00538 95.10)",
+          "oklch(95.00% 0.00538 95.10)"
+        ]
+      },
+      "paper-dark": {
+        "role": "neutral",
+        "displayName": "Warm Paper — Dark",
+        "nativeToken": "Palette.paper",
+        "appearance": "dark",
+        "appearancePair": "paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.00861 137.82)",
+          "oklch(26.43% 0.00861 137.82)",
+          "oklch(37.86% 0.00861 137.82)",
+          "oklch(49.29% 0.00861 137.82)",
+          "oklch(60.71% 0.00861 137.82)",
+          "oklch(72.14% 0.00861 137.82)",
+          "oklch(83.57% 0.00861 137.82)",
+          "oklch(95.00% 0.00861 137.82)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sage Paper",
+        "nativeToken": "Palette.sidebar",
+        "appearance": "light",
+        "appearancePair": "sidebar-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.01067 112.37)",
+          "oklch(26.43% 0.01067 112.37)",
+          "oklch(37.86% 0.01067 112.37)",
+          "oklch(49.29% 0.01067 112.37)",
+          "oklch(60.71% 0.01067 112.37)",
+          "oklch(72.14% 0.01067 112.37)",
+          "oklch(83.57% 0.01067 112.37)",
+          "oklch(95.00% 0.01067 112.37)"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "Sage Paper — Dark",
+        "nativeToken": "Palette.sidebar",
+        "appearance": "dark",
+        "appearancePair": "sidebar",
+        "tonalRamp": [
+          "oklch(15.00% 0.00970 145.24)",
+          "oklch(26.43% 0.00970 145.24)",
+          "oklch(37.86% 0.00970 145.24)",
+          "oklch(49.29% 0.00970 145.24)",
+          "oklch(60.71% 0.00970 145.24)",
+          "oklch(72.14% 0.00970 145.24)",
+          "oklch(83.57% 0.00970 145.24)",
+          "oklch(95.00% 0.00970 145.24)"
+        ]
+      },
+      "index": {
+        "role": "neutral",
+        "displayName": "Index Paper",
+        "nativeToken": "Palette.index",
+        "appearance": "light",
+        "appearancePair": "index-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.00793 106.55)",
+          "oklch(26.43% 0.00793 106.55)",
+          "oklch(37.86% 0.00793 106.55)",
+          "oklch(49.29% 0.00793 106.55)",
+          "oklch(60.71% 0.00793 106.55)",
+          "oklch(72.14% 0.00793 106.55)",
+          "oklch(83.57% 0.00793 106.55)",
+          "oklch(95.00% 0.00793 106.55)"
+        ]
+      },
+      "index-dark": {
+        "role": "neutral",
+        "displayName": "Index Paper — Dark",
+        "nativeToken": "Palette.index",
+        "appearance": "dark",
+        "appearancePair": "index",
+        "tonalRamp": [
+          "oklch(15.00% 0.00957 145.27)",
+          "oklch(26.43% 0.00957 145.27)",
+          "oklch(37.86% 0.00957 145.27)",
+          "oklch(49.29% 0.00957 145.27)",
+          "oklch(60.71% 0.00957 145.27)",
+          "oklch(72.14% 0.00957 145.27)",
+          "oklch(83.57% 0.00957 145.27)",
+          "oklch(95.00% 0.00957 145.27)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "nativeToken": "Palette.ink",
+        "appearance": "light",
+        "appearancePair": "ink-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.02048 159.34)",
+          "oklch(26.43% 0.02048 159.34)",
+          "oklch(37.86% 0.02048 159.34)",
+          "oklch(49.29% 0.02048 159.34)",
+          "oklch(60.71% 0.02048 159.34)",
+          "oklch(72.14% 0.02048 159.34)",
+          "oklch(83.57% 0.02048 159.34)",
+          "oklch(95.00% 0.02048 159.34)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Graphite — Dark",
+        "nativeToken": "Palette.ink",
+        "appearance": "dark",
+        "appearancePair": "ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.01399 124.56)",
+          "oklch(26.43% 0.01399 124.56)",
+          "oklch(37.86% 0.01399 124.56)",
+          "oklch(49.29% 0.01399 124.56)",
+          "oklch(60.71% 0.01399 124.56)",
+          "oklch(72.14% 0.01399 124.56)",
+          "oklch(83.57% 0.01399 124.56)",
+          "oklch(95.00% 0.01399 124.56)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary Graphite",
+        "nativeToken": "Palette.secondary",
+        "appearance": "light",
+        "appearancePair": "secondary-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.02578 138.99)",
+          "oklch(26.43% 0.02578 138.99)",
+          "oklch(37.86% 0.02578 138.99)",
+          "oklch(49.29% 0.02578 138.99)",
+          "oklch(60.71% 0.02578 138.99)",
+          "oklch(72.14% 0.02578 138.99)",
+          "oklch(83.57% 0.02578 138.99)",
+          "oklch(95.00% 0.02578 138.99)"
+        ]
+      },
+      "secondary-dark": {
+        "role": "neutral",
+        "displayName": "Secondary Graphite — Dark",
+        "nativeToken": "Palette.secondary",
+        "appearance": "dark",
+        "appearancePair": "secondary",
+        "tonalRamp": [
+          "oklch(15.00% 0.02157 138.45)",
+          "oklch(26.43% 0.02157 138.45)",
+          "oklch(37.86% 0.02157 138.45)",
+          "oklch(49.29% 0.02157 138.45)",
+          "oklch(60.71% 0.02157 138.45)",
+          "oklch(72.14% 0.02157 138.45)",
+          "oklch(83.57% 0.02157 138.45)",
+          "oklch(95.00% 0.02157 138.45)"
+        ]
+      },
+      "selection": {
+        "role": "neutral",
+        "displayName": "Selected Sage",
+        "nativeToken": "Palette.selection",
+        "appearance": "light",
+        "appearancePair": "selection-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.01720 128.67)",
+          "oklch(26.43% 0.01720 128.67)",
+          "oklch(37.86% 0.01720 128.67)",
+          "oklch(49.29% 0.01720 128.67)",
+          "oklch(60.71% 0.01720 128.67)",
+          "oklch(72.14% 0.01720 128.67)",
+          "oklch(83.57% 0.01720 128.67)",
+          "oklch(95.00% 0.01720 128.67)"
+        ]
+      },
+      "selection-dark": {
+        "role": "neutral",
+        "displayName": "Selected Sage — Dark",
+        "nativeToken": "Palette.selection",
+        "appearance": "dark",
+        "appearancePair": "selection",
+        "tonalRamp": [
+          "oklch(15.00% 0.03098 146.62)",
+          "oklch(26.43% 0.03098 146.62)",
+          "oklch(37.86% 0.03098 146.62)",
+          "oklch(49.29% 0.03098 146.62)",
+          "oklch(60.71% 0.03098 146.62)",
+          "oklch(72.14% 0.03098 146.62)",
+          "oklch(83.57% 0.03098 146.62)",
+          "oklch(95.00% 0.03098 146.62)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Fine Rule",
+        "nativeToken": "Palette.rule",
+        "appearance": "light",
+        "appearancePair": "rule-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.01492 115.06)",
+          "oklch(26.43% 0.01492 115.06)",
+          "oklch(37.86% 0.01492 115.06)",
+          "oklch(49.29% 0.01492 115.06)",
+          "oklch(60.71% 0.01492 115.06)",
+          "oklch(72.14% 0.01492 115.06)",
+          "oklch(83.57% 0.01492 115.06)",
+          "oklch(95.00% 0.01492 115.06)"
+        ]
+      },
+      "rule-dark": {
+        "role": "neutral",
+        "displayName": "Fine Rule — Dark",
+        "nativeToken": "Palette.rule",
+        "appearance": "dark",
+        "appearancePair": "rule",
+        "tonalRamp": [
+          "oklch(15.00% 0.01982 139.43)",
+          "oklch(26.43% 0.01982 139.43)",
+          "oklch(37.86% 0.01982 139.43)",
+          "oklch(49.29% 0.01982 139.43)",
+          "oklch(60.71% 0.01982 139.43)",
+          "oklch(72.14% 0.01982 139.43)",
+          "oklch(83.57% 0.01982 139.43)",
+          "oklch(95.00% 0.01982 139.43)"
+        ]
+      },
+      "note": {
+        "role": "neutral",
+        "displayName": "Note Paper",
+        "nativeToken": "Palette.note",
+        "appearance": "light",
+        "appearancePair": "note-dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.01193 106.62)",
+          "oklch(26.43% 0.01193 106.62)",
+          "oklch(37.86% 0.01193 106.62)",
+          "oklch(49.29% 0.01193 106.62)",
+          "oklch(60.71% 0.01193 106.62)",
+          "oklch(72.14% 0.01193 106.62)",
+          "oklch(83.57% 0.01193 106.62)",
+          "oklch(95.00% 0.01193 106.62)"
+        ]
+      },
+      "note-dark": {
+        "role": "neutral",
+        "displayName": "Note Paper — Dark",
+        "nativeToken": "Palette.note",
+        "appearance": "dark",
+        "appearancePair": "note",
+        "tonalRamp": [
+          "oklch(15.00% 0.01788 135.13)",
+          "oklch(26.43% 0.01788 135.13)",
+          "oklch(37.86% 0.01788 135.13)",
+          "oklch(49.29% 0.01788 135.13)",
+          "oklch(60.71% 0.01788 135.13)",
+          "oklch(72.14% 0.01788 135.13)",
+          "oklch(83.57% 0.01788 135.13)",
+          "oklch(95.00% 0.01788 135.13)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Concept Title",
+        "purpose": "Selected concept identity.",
+        "nativeDeclaration": "Palette.title = Font.custom(\"Songti SC\", size: 36, relativeTo: .largeTitle)",
+        "addedLineSpacing": "4pt"
+      },
+      "heading": {
+        "displayName": "Index Heading",
+        "purpose": "Collection or library-section heading.",
+        "nativeDeclaration": "Palette.heading = Font.custom(\"Songti SC\", size: 25, relativeTo: .title2)",
+        "addedLineSpacing": "4pt"
+      },
+      "headline": {
+        "displayName": "Plain-Language Explanation",
+        "purpose": "Leading explanation in moss.",
+        "nativeDeclaration": "Font.custom(\"Songti SC\", size: 25)",
+        "addedLineSpacing": "8pt"
+      },
+      "body": {
+        "displayName": "Reading Body",
+        "purpose": "Selectable analogy and technical detail.",
+        "nativeDeclaration": "Font.system(size: 16)",
+        "addedLineSpacing": "7pt"
+      },
+      "title": {
+        "displayName": "Medium Control and Row Text",
+        "purpose": "Normal concept-row titles and primary-button labels.",
+        "nativeDeclaration": "Font.system(size: 13, weight: .medium)"
+      },
+      "label": {
+        "displayName": "Semibold Section and Selected Text",
+        "purpose": "Section labels and selected concept-row titles.",
+        "nativeDeclaration": "Font.system(size: 13, weight: .semibold)"
+      },
+      "field": {
+        "displayName": "Search Field",
+        "purpose": "Plain native TextField text.",
+        "nativeDeclaration": "Font.system(size: 12)"
+      },
+      "chip": {
+        "displayName": "Related Concept",
+        "purpose": "Intrinsic-width concept-link labels.",
+        "nativeDeclaration": "Font.system(size: 12, weight: .medium)",
+        "maximumLines": 2
+      },
+      "note": {
+        "displayName": "Personal Note",
+        "purpose": "Native TextEditor text.",
+        "nativeDeclaration": "Font.system(size: 14)",
+        "addedLineSpacing": "5pt"
+      },
+      "meta": {
+        "displayName": "Metadata",
+        "purpose": "Counts, summaries, hints and status labels.",
+        "nativeDeclaration": "Font.system(size: 10)"
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [],
+    "native": {
+      "framework": "SwiftUI with AppKit; native desktop, not a web wrapper.",
+      "coordinateUnit": "pt",
+      "sourceOfTruth": "DESIGN.md frontmatter records extracted primitives; SwiftUI source owns platform behavior.",
+      "appearance": "Palette.adaptive uses an NSColor dynamic provider and bestMatch(from: [.darkAqua, .aqua]). Each base color token pairs with its -dark sibling.",
+      "fontMapping": "system-ui represents SwiftUI Font.system. 400/500/600 represent regular/medium/semibold. Added lineSpacing is not total line height.",
+      "layout": {
+        "container": "HSplitView",
+        "columns": [
+          {
+            "name": "sidebar",
+            "minimum": 200,
+            "ideal": 218,
+            "maximum": 240
+          },
+          {
+            "name": "index",
+            "minimum": 270,
+            "ideal": 314,
+            "maximum": 340
+          },
+          {
+            "name": "reader",
+            "minimum": 540,
+            "maximum": "remaining window space"
+          }
+        ],
+        "windowBrief": {
+          "source": ".impeccable/surfaces/library.md",
+          "minimum": [
+            1080,
+            700
+          ],
+          "ordinary": [
+            1340,
+            860
+          ],
+          "compactReview": [
+            1100,
+            760
+          ]
+        },
+        "reader": {
+          "contentMaximumWidth": 700,
+          "horizontalPadding": "{spacing.reading-inset}",
+          "topPadding": 34,
+          "bottomPadding": 32,
+          "toolbarHorizontalPadding": 30,
+          "toolbarTopPadding": 24,
+          "toolbarBottomPadding": 16
+        },
+        "adaptation": "Three columns remain visible at compact desktop size; reader and index scroll vertically. No CSS breakpoints or mobile composition.",
+        "conceptFlow": "Intrinsic-width measurement; remeasure oversized links against available width; both gaps use spacing.concept-gap.",
+        "path": {
+          "maximumRenderedPositions": 24,
+          "preferredPositionsBeforeSelection": 12,
+          "visibleHeight": 5,
+          "interactionHeight": 17,
+          "gap": 3
+        },
+        "index": {
+          "pageSize": 60,
+          "rowGap": 4,
+          "horizontalPadding": "{spacing.index-inset}",
+          "implementation": "LazyVStack, explicit load-more, selection scroll-to"
+        }
+      },
+      "shapes": {
+        "masteryBadge": "Capsule",
+        "toast": "Capsule",
+        "searchStrokeWidth": "0.5pt",
+        "conceptLinkStrokeWidth": "0.7pt",
+        "readingRuleHeight": "1pt"
+      },
+      "states": {
+        "primaryButton": "Background opacity is 1 enabled, 0.8 enabled and pressed, 0.4 disabled. Foreground stays on-accent. No explicit hover animation.",
+        "quietButton": "Secondary when inactive, accent when active. Plain native button with help and accessibility labels.",
+        "search": "Empty input shows Command-F hint; nonempty input shows clear action. FocusState receives the model focus-search event.",
+        "row": "Transparent by default, paper on hover, selection when selected. Selection takes precedence; selected title becomes semibold and gains the selected accessibility trait.",
+        "reviewQueue": "concealSummary is true whenever model.section is review, so every queue row omits its summary.",
+        "disclosure": "Technical and source groups initialize collapsed for a newly selected entry; native DisclosureGroup owns interaction.",
+        "note": "Dirty drafts are cached by entry. Save is disabled when clean, conflicted, saving or deleted; editor is disabled when deleted. A conflicting latest note preserves the draft and offers use-latest or keep-draft choices.",
+        "workspace": "Native loading view, ContentUnavailableView, sheets and error alert. Confirmation capsule ignores hit testing."
+      },
+      "performanceContract": "Keep bounded 60-entry pagination, the 24-position path, cancellable debounced search and database work off the main actor. This documentation pass did not measure runtime performance.",
+      "evidence": {
+        "sourceFiles": [
+          "PRODUCT.md",
+          ".impeccable/surfaces/library.md",
+          "Sources/ZhijianApp/Theme.swift",
+          "Sources/ZhijianApp/ConceptFlowLayout.swift",
+          "Sources/ZhijianApp/Workspace.swift",
+          "Sources/ZhijianApp/EntryListView.swift",
+          "Sources/ZhijianApp/EntryDetailView.swift"
+        ],
+        "inspectedFinalCaptures": [
+          ".impeccable/review/desktop-final.jpg",
+          ".impeccable/review/compact-final.jpg",
+          ".impeccable/review/review-final.jpg"
+        ],
+        "finishReviewerHandoff": {
+          "fixList": "resolved",
+          "disposition": "ship",
+          "origin": "Reported by the parent finish-review handoff; not rerun by the documenter."
+        },
+        "runtimeChecksInThisPass": [],
+        "darkAppearance": "Exact dark tokens were extracted from source; no dark runtime capture was inspected in this handoff."
+      }
+    },
+    "previewPolicy": {
+      "purpose": "HTML/CSS snippets are self-contained illustrations for the design panel, not shipped app code or native rendering evidence.",
+      "units": "Previews map one documented SwiftUI point to one CSS pixel for comparison. Native text metrics, extra line spacing and control geometry remain platform-owned.",
+      "focusAndHover": "Explicit custom states follow the source. Browser-native focus outlines and cursor affordances are preview equivalents, not new SwiftUI tokens.",
+      "icons": "Inline SVGs are schematic stand-ins for SF Symbols, not extracted SF Symbol assets.",
+      "tonalRamps": "Eight-step OKLCH ramps are synthesized display aids at the source hue and chroma. They are not app palette tokens or new appearance values.",
+      "validation": "No HTML/CSS detector or browser runtime was used for this native-app documenter pass."
+    }
+  },
+  "components": [
+    {
+      "name": "Moss Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "MossButtonStyle: explicit pressed and disabled background opacity, native focus.",
+      "html": "<button class=\"ds-moss-button\">收录第一个概念</button>",
+      "css": ".ds-moss-button{font:500 13px system-ui;border:0;border-radius:8px;padding:10px 17px;background:#3E624C;color:#FFFFFF}.ds-moss-button:hover{cursor:pointer}.ds-moss-button:focus-visible{outline:auto}.ds-moss-button:active:not(:disabled){background:rgba(62,98,76,.8)}.ds-moss-button:disabled{background:rgba(62,98,76,.4);cursor:default}@media(prefers-color-scheme:dark){.ds-moss-button{background:#A6C4A2;color:#18271C}.ds-moss-button:active:not(:disabled){background:rgba(166,196,162,.8)}.ds-moss-button:disabled{background:rgba(166,196,162,.4)}}"
+    },
+    {
+      "name": "Quiet Icon Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Plain 30-point native icon action; aria-pressed illustrates the active accent state.",
+      "html": "<button class=\"ds-quiet-button\" aria-label=\"收藏词条\" title=\"收藏词条\" aria-pressed=\"false\"><svg viewBox=\"0 0 16 16\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.25\" aria-hidden=\"true\"><path d=\"M4 2h8v12l-4-3-4 3Z\"/></svg></button>",
+      "css": ".ds-quiet-button{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:0;background:transparent;color:#596456}.ds-quiet-button[aria-pressed=true]{color:#3E624C}.ds-quiet-button:hover{cursor:pointer}.ds-quiet-button:focus-visible{outline:auto}@media(prefers-color-scheme:dark){.ds-quiet-button{color:#A2AC9F}.ds-quiet-button[aria-pressed=true]{color:#A6C4A2}}"
+    },
+    {
+      "name": "Concept Search",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Paper field with a fine rule and an empty-search shortcut hint; the app swaps the hint for a clear button when text exists.",
+      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 16 16\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.25\" aria-hidden=\"true\"><circle cx=\"6.5\" cy=\"6.5\" r=\"4.5\"/><path d=\"m10 10 4 4\"/></svg><input aria-label=\"搜索词条\" placeholder=\"找一个概念…\" /><span class=\"ds-search-hint\">⌘ F</span></label>",
+      "css": ".ds-search{display:flex;align-items:center;gap:7px;padding:10px;border:.5px solid #DDDFD4;border-radius:7px;background:#FCFBF7;color:#596456}.ds-search input{min-width:0;flex:1;border:0;background:transparent;color:#27332C;font:400 12px system-ui}.ds-search input:hover{cursor:text}.ds-search input:focus-visible{outline:auto}.ds-search-hint{font:400 10px system-ui;white-space:nowrap}@media(prefers-color-scheme:dark){.ds-search{background:#20231F;border-color:#3B4339;color:#A2AC9F}.ds-search input{color:#E5E9DF}}"
+    },
+    {
+      "name": "Concept Index Rows",
+      "kind": "nav",
+      "refersTo": "concept-row",
+      "description": "Selected state overrides hover. In review, omit every ds-concept-summary element to keep the queue title-only.",
+      "html": "<nav class=\"ds-concept-index\" aria-label=\"概念索引\"><button class=\"ds-concept-row\" aria-current=\"true\"><span class=\"ds-concept-number\">03</span><span class=\"ds-concept-copy\"><span class=\"ds-concept-title\">残差流</span><span class=\"ds-concept-summary\">贯穿模型各层的一条“主干传送带”。</span></span></button><button class=\"ds-concept-row\"><span class=\"ds-concept-number\">04</span><span class=\"ds-concept-copy\"><span class=\"ds-concept-title\">MLP 与 down_proj</span><span class=\"ds-concept-summary\">一座“知识加工厂”，和它的“出货大门”。</span></span></button></nav>",
+      "css": ".ds-concept-index{display:flex;flex-direction:column;gap:4px;background:#F6F6F0}.ds-concept-row{display:flex;align-items:flex-start;gap:10px;width:100%;padding:11px 10px;border:0;border-radius:7px;text-align:left;background:transparent;color:#27332C}.ds-concept-row:hover{cursor:pointer;background:#FCFBF7}.ds-concept-row[aria-current=true],.ds-concept-row[aria-current=true]:hover{background:#E5EBDF}.ds-concept-row:focus-visible{outline:auto}.ds-concept-number{width:19px;flex-shrink:0;padding-top:3px;font:400 10px system-ui;font-variant-numeric:tabular-nums;color:#596456}.ds-concept-row[aria-current=true] .ds-concept-number{color:#3E624C}.ds-concept-copy{display:flex;flex-direction:column;gap:6px;min-width:0}.ds-concept-title{font:500 13px system-ui;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.ds-concept-row[aria-current=true] .ds-concept-title{font-weight:600}.ds-concept-summary{font:400 10px system-ui;color:#596456;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(prefers-color-scheme:dark){.ds-concept-index{background:#1C201C}.ds-concept-row{color:#E5E9DF}.ds-concept-row:hover{background:#20231F}.ds-concept-row[aria-current=true],.ds-concept-row[aria-current=true]:hover{background:#303F31}.ds-concept-number,.ds-concept-summary{color:#A2AC9F}.ds-concept-row[aria-current=true] .ds-concept-number{color:#A6C4A2}}"
+    },
+    {
+      "name": "Related-Concept Links",
+      "kind": "chip",
+      "refersTo": "concept-link",
+      "description": "Natural-width two-line labels in an 8-point wrapping flow; inline arrows stand in for SF Symbols.",
+      "html": "<div class=\"ds-concept-flow\"><button class=\"ds-concept-link\"><span>隐状态</span><svg viewBox=\"0 0 12 12\" width=\"9\" height=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" aria-hidden=\"true\"><path d=\"M3 9 9 3M3 3h6v6\"/></svg></button><button class=\"ds-concept-link\"><span>MLP 与 down_proj</span><svg viewBox=\"0 0 12 12\" width=\"9\" height=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" aria-hidden=\"true\"><path d=\"M3 9 9 3M3 3h6v6\"/></svg></button><button class=\"ds-concept-link\"><span>张量</span><svg viewBox=\"0 0 12 12\" width=\"9\" height=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" aria-hidden=\"true\"><path d=\"M3 9 9 3M3 3h6v6\"/></svg></button></div>",
+      "css": ".ds-concept-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}.ds-concept-link{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:8px 11px;border:.7px solid #DDDFD4;border-radius:6px;background:#F6F6F0;color:#3E624C;font:500 12px system-ui;text-align:left}.ds-concept-link span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.ds-concept-link svg{flex-shrink:0}.ds-concept-link:hover{cursor:pointer}.ds-concept-link:focus-visible{outline:auto}@media(prefers-color-scheme:dark){.ds-concept-link{border-color:#3B4339;background:#1C201C;color:#A6C4A2}}"
+    },
+    {
+      "name": "Personal-Note Card",
+      "kind": "card",
+      "refersTo": "note-card",
+      "description": "Bounded native note editor on note paper. This unchanged-state preview uses a disabled native save button.",
+      "html": "<section class=\"ds-note-card\"><h3 class=\"ds-note-heading\">换我来说</h3><textarea class=\"ds-note-editor\" aria-label=\"我的理解\" rows=\"5\" placeholder=\"如果讲给朋友听，你会怎么解释？\"></textarea><footer class=\"ds-note-footer\"><span>写成自己的话，才算真正留下来。</span><button class=\"ds-note-save\" disabled>保存理解</button></footer></section>",
+      "css": ".ds-note-card{padding:18px;border-radius:9px;background:#F0F0E7;color:#27332C}.ds-note-heading{margin:0 0 13px;font:600 13px system-ui;color:#596456}.ds-note-editor{display:block;width:100%;min-height:88px;max-height:150px;padding:0;border:0;background:transparent;color:#27332C;font:400 14px system-ui;resize:none}.ds-note-editor:hover{cursor:text}.ds-note-editor:focus-visible{outline:auto}.ds-note-footer{display:flex;align-items:center;justify-content:space-between;gap:13px;margin-top:13px;font:400 10px system-ui;color:#596456}.ds-note-save{font:400 11px system-ui}.ds-note-save:hover:not(:disabled){cursor:pointer}.ds-note-save:focus-visible{outline:auto}@media(prefers-color-scheme:dark){.ds-note-card{background:#2B3128;color:#E5E9DF}.ds-note-heading,.ds-note-footer{color:#A2AC9F}.ds-note-editor{color:#E5E9DF}}"
+    },
+    {
+      "name": "Bounded Collection Path",
+      "kind": "custom",
+      "refersTo": "path-position",
+      "description": "Fifteen-unit example. The app renders at most 24 nearby positions, using 5-point marks inside 17-point interaction areas.",
+      "html": "<div class=\"ds-path\" aria-label=\"文章阅读路径\"><button class=\"ds-path-position\" aria-label=\"前往学习单元 1\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 2\"><span></span></button><button class=\"ds-path-position ds-path-current\" aria-label=\"前往学习单元 3\" aria-current=\"step\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 4\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 5\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 6\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 7\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 8\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 9\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 10\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 11\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 12\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 13\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 14\"><span></span></button><button class=\"ds-path-position\" aria-label=\"前往学习单元 15\"><span></span></button></div>",
+      "css": ".ds-path{display:flex;gap:3px}.ds-path-position{display:flex;align-items:center;flex:1;min-width:0;height:17px;padding:0;border:0;background:transparent}.ds-path-position span{display:block;width:100%;height:5px;border-radius:1.5px;background:#DDDFD4}.ds-path-current span{background:#3E624C}.ds-path-position:hover{cursor:pointer}.ds-path-position:focus-visible{outline:auto}@media(prefers-color-scheme:dark){.ds-path-position span{background:#3B4339}.ds-path-current span{background:#A6C4A2}}"
+    },
+    {
+      "name": "Progressive Detail Disclosure",
+      "kind": "custom",
+      "description": "Native DisclosureGroup starts collapsed on a newly selected entry. Browser details is an illustrative, runtime-free equivalent.",
+      "html": "<details class=\"ds-reading-disclosure\"><summary class=\"ds-reading-summary\">再深一层</summary><p class=\"ds-reading-body\">问题经过每一层时，会把新的处理结果留在这条共享通道里。</p></details>",
+      "css": ".ds-reading-disclosure{padding:15px 0;border-bottom:1px solid #DDDFD4;color:#27332C}.ds-reading-summary{font:500 13px system-ui}.ds-reading-summary:hover{cursor:pointer}.ds-reading-summary:focus-visible{outline:auto}.ds-reading-body{padding-top:15px;margin:0 0 5px;font:400 16px system-ui;user-select:text}@media(prefers-color-scheme:dark){.ds-reading-disclosure{border-color:#3B4339;color:#E5E9DF}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Concept Desk",
+    "overview": "知间 is a quiet native macOS reading space. Warm paper, graphite text and moss accents make unfamiliar ideas approachable; Songti gives concept titles and plain-language explanations a bookish voice, while the system face keeps reading and controls familiar.\n\nThe interface recedes around the explanation. Tonal surfaces distinguish navigation, the index and the reading page. Detail unfolds on request, related concepts remain compact, and a personal note invites the reader to explain an idea in their own words. Controls, focus, menus and sheets retain native macOS behavior.",
+    "keyCharacteristics": [
+      "Warm paper, graphite and moss with explicit adaptive dark counterparts.",
+      "Songti for concept language; the native system face and SF Symbols for reading and operation.",
+      "Flat tonal layers, fine rules and restrained rounded controls.",
+      "Progressive reading, intrinsic-width concept links and recall before reveal."
+    ],
+    "rules": [
+      {
+        "name": "The Meaning Before Color Rule.",
+        "body": "Moss marks actions, concept links and selected meaning. Rust marks caveats, unsaved work and conflicts; it is not a second decorative accent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule.",
+        "body": "Use Songti for concept titles and the leading explanation. Use the native system face for body text, metadata, inputs and controls.",
+        "section": "typography"
+      },
+      {
+        "name": "The Reading First Rule.",
+        "body": "Keep the reading pane flexible, the index bounded and related concepts at their intrinsic width. Resizing must preserve a readable column and vertical scrolling.",
+        "section": "layout"
+      },
+      {
+        "name": "The Tonal Separation Rule.",
+        "body": "Separate the main workspace with surface tone and fine rules. Preserve system-owned elevation for native menus, sheets and alerts.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Recall Before Reveal Rule.",
+        "body": "The review queue shows titles without summaries. Keep answer content behind the explicit reveal action in the reading pane.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do use the paired adaptive palette, including the current secondary text token.",
+      "Do keep Songti concept titles and explanations alongside native system reading text and SF Symbols.",
+      "Do lead with the plain-language explanation and disclose technical detail and source context progressively.",
+      "Do let concept links wrap at their natural width with 8pt horizontal and vertical gaps.",
+      "Do preserve native focus and keyboard behavior, accessible icon labels, retained note drafts and conflict choices.",
+      "Do preserve 60-entry pagination and the maximum 24-position collection path."
+    ],
+    "donts": [
+      "Don't stretch related-concept tags into equal-width grid cells.",
+      "Don't expose summary answers in the review queue.",
+      "Don't add decorative gradients, glows, backgrounds or motion to the reading workspace.",
+      "Don't invent article links or turn user-provided notes into verified quotations.",
+      "Don't replace a dirty personal-note draft when the entry refreshes."
+    ]
+  }
+}

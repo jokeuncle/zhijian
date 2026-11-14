@@ -1,0 +1,26 @@
+知间 macOS 预览版 — 首次打开
+
+系统要求：macOS 14 或更新版本。通用二进制包含 Apple Silicon 与 Intel。
+无需安装 Swift、Xcode、Node.js 或 Python，也无需 API Key 即可使用词典。
+
+1. 打开 DMG，将“知间.app”拖入 Applications（应用程序）。
+2. 从“应用程序”打开知间。
+3. 本预览版采用 ad-hoc 签名，尚未经过 Apple Developer ID 签名与公证。
+   如果 macOS 提示无法验证开发者，请确认下载来自 harnessloom.com 或
+   github.com/jokeuncle/zhijian，然后进入“系统设置 → 隐私与安全性”，
+   找到知间的拦截记录，选择“仍要打开”，并按系统提示确认。
+   此授权只针对该应用。不要关闭全局 Gatekeeper 或批量移除安全属性。
+4. 如果系统明确提示恶意软件或文件已损坏，请停止并重新核对下载来源与 SHA-256。
+
+Apple 官方说明：https://support.apple.com/zh-cn/102445
+
+每位用户的词库独立保存在：
+~/Library/Application Support/Zhijian/library.sqlite
+
+内置 15 个学习单元与 5 个对比补充词条。自己的笔记不会被打包进安装包。
+词典本身离线可用。AI Agent 使用已有的 Codex 或其他 MCP 客户端，按客户端要求配置。
+在知间左下角点击终端图标，即可复制按当前安装路径生成的 MCP 连接命令。
+
+备份与更新：
+在应用的词库操作菜单中导出 JSON 备份。更新时退出旧版，再用新版替换应用，
+保留 Application Support 中的用户词库。不要直接删除用户数据目录。

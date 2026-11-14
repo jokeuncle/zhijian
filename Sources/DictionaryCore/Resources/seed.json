@@ -1,0 +1,371 @@
+{
+  "entries": [
+    {
+      "id": "weight-parameter",
+      "title": "权重 / 参数",
+      "english": "Weight / Parameter",
+      "summary": "模型脑子里的“记忆数字”。",
+      "analogy": "像神经元之间的连接强度，模型学到的规律和习惯，体现在大量可学习的数字里。改权重，就是直接改这些数字。",
+      "details": "参数是可学习数值的统称；权重是其中最常见的一类。推理时，它们参与计算并影响输出。",
+      "caveat": "知识通常分布在大量参数之间，并非一个数字单独存着一条知识。",
+      "relatedIDs": [
+        "tensor",
+        "rank-one-edit"
+      ],
+      "category": "模型大脑的内部构造",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像神经元之间的连接强度，模型学到的规律和习惯，体现在大量可学习的数字里。改权重，就是直接改这些数字。"
+    },
+    {
+      "id": "tensor",
+      "title": "张量",
+      "english": "Tensor",
+      "summary": "装数字的“多维表格”。",
+      "analogy": "一串数字像向量，一张表格像矩阵。把表格按更多维度组织起来，就是张量。",
+      "details": "张量可以有任意数量的轴。权重、输入和隐状态都经常以张量表示。",
+      "caveat": "“把表格摞起来”只是三维张量的类比；张量还可以有更多维度。",
+      "relatedIDs": [
+        "weight-parameter",
+        "hidden-state"
+      ],
+      "category": "模型大脑的内部构造",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "一串数字像向量，一张表格像矩阵。把表格按更多维度组织起来，就是张量。"
+    },
+    {
+      "id": "residual-stream",
+      "title": "残差流",
+      "english": "Residual Stream",
+      "summary": "贯穿模型各层的一条“主干传送带”。",
+      "analogy": "问题从传送带这头放上去，经过模型的一层又一层，每层都往上添一点自己的处理结果，最后传到终点变成答案。",
+      "details": "在常见 Transformer 中，注意力和 MLP 子层把输出加到共享的残差表示上。各层读取、加工并更新这份表示。",
+      "caveat": "它是不断变化的高维数值表示，不是一条真的搬运文字的传送带。",
+      "relatedIDs": [
+        "tensor",
+        "hidden-state",
+        "mlp-down-proj"
+      ],
+      "category": "模型大脑的内部构造",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "问题从传送带这头放上去，经过模型的一层又一层，每层都往上添一点自己的处理结果，最后传到终点变成答案。"
+    },
+    {
+      "id": "mlp-down-proj",
+      "title": "MLP 与 down_proj",
+      "english": "MLP & down_proj",
+      "summary": "一座“知识加工厂”，和它的“出货大门”。",
+      "analogy": "MLP 是模型层里的加工厂；down_proj 把中间结果送回残差流所需的维度，就像工厂把货物送回主干传送带。",
+      "details": "许多模型先把表示映射到更高维的中间空间，再由 down_proj 映射回模型维度。",
+      "caveat": "3584 是特定模型的配置，并非所有模型都有相同数量的“窗口”；神经元也不必对应单一知识。",
+      "relatedIDs": [
+        "residual-stream",
+        "weight-parameter"
+      ],
+      "category": "模型大脑的内部构造",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "MLP 是模型层里的加工厂；down_proj 把中间结果送回残差流所需的维度，就像工厂把货物送回主干传送带。"
+    },
+    {
+      "id": "hidden-state",
+      "title": "隐状态",
+      "english": "Hidden State",
+      "summary": "模型思考半路上的“中间草稿”。",
+      "analogy": "字还没吐出来，内部正在流转的那组数字，代表模型在当前层、当前位置处理到的状态。",
+      "details": "通常指某层对 token 的内部向量表示，可比较不同输入、层和位置的隐状态来寻找模式。",
+      "caveat": "它不是能直接阅读的内心独白；相关方向也不等于完整的因果机制。",
+      "relatedIDs": [
+        "residual-stream",
+        "probe"
+      ],
+      "category": "模型大脑的内部构造",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "字还没吐出来，内部正在流转的那组数字，代表模型在当前层、当前位置处理到的状态。"
+    },
+    {
+      "id": "gradient-backprop",
+      "title": "梯度 / 反向传播",
+      "english": "Gradient / Backpropagation",
+      "summary": "沿着“错在哪、怎么改”的线索往回找。",
+      "analogy": "让 AI 做题，算出错了多少，再从后往前传回误差信号，告诉参数往哪个方向微调。",
+      "details": "梯度是损失对参数的局部变化率；反向传播计算梯度；优化器再用梯度更新选定的参数。",
+      "caveat": "三者不是同一件事，训练也不一定更新全部参数。权重编辑可以不使用梯度。",
+      "relatedIDs": [
+        "weight-parameter",
+        "rank-one-edit"
+      ],
+      "category": "这次脑部手术的手法",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "让 AI 做题，算出错了多少，再从后往前传回误差信号，告诉参数往哪个方向微调。"
+    },
+    {
+      "id": "direction-projection",
+      "title": "方向与投影",
+      "english": "Direction & Projection",
+      "summary": "“朝哪种特征变化”，以及“沿它使了多大劲”。",
+      "analogy": "在高维空间里挑一根方向，用投影量一量：当前内部表示在这根方向上有多大分量。",
+      "details": "与单位方向向量做点积，可得到有符号投影值。方向可以来自统计比较或其他分析。",
+      "caveat": "“复读方向”是行为相关特征的简称，并非模型真的有一个单独的“念头开关”。",
+      "relatedIDs": [
+        "tensor",
+        "probe",
+        "ablation"
+      ],
+      "category": "这次脑部手术的手法",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "在高维空间里挑一根方向，用投影量一量：当前内部表示在这根方向上有多大分量。"
+    },
+    {
+      "id": "ablation",
+      "title": "消融",
+      "english": "Ablation",
+      "summary": "暂时拿掉一个部分，看看它起什么作用。",
+      "analogy": "像给电路断开一条支路再观察灯的变化。可以抹去某个方向，也可以关闭神经元或注意力头。",
+      "details": "方向消融是消融的一种形式：去掉表示在指定方向上的投影。",
+      "caveat": "消融不只针对坏毛病，也可能破坏正常能力，需要对照实验。",
+      "relatedIDs": [
+        "direction-projection",
+        "rank-one-edit"
+      ],
+      "category": "这次脑部手术的手法",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像给电路断开一条支路再观察灯的变化。可以抹去某个方向，也可以关闭神经元或注意力头。"
+    },
+    {
+      "id": "rank-one-edit",
+      "title": "秩一编辑",
+      "english": "Rank-1 Edit",
+      "summary": "很多数字一起改，但改动只有一份方向结构。",
+      "analogy": "手术调整由两个向量的外积组成，而不是给矩阵的每个位置独立下指令。",
+      "details": "秩一更新可以写为 ΔW = u vᵀ。v 决定对输入的响应强度，输出变化沿 u 方向；α 可调整幅度。",
+      "caveat": "秩一只限制线性结构，不保证只影响一种行为，也不保证其他能力不受影响。",
+      "relatedIDs": [
+        "svd",
+        "weight-parameter",
+        "direction-projection"
+      ],
+      "category": "这次脑部手术的手法",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "手术调整由两个向量的外积组成，而不是给矩阵的每个位置独立下指令。"
+    },
+    {
+      "id": "svd",
+      "title": "SVD（奇异值分解）",
+      "english": "Singular Value Decomposition",
+      "summary": "检查矩阵主要变化成分的“成分检测仪”。",
+      "analogy": "扫描修改前后的权重差，看变化集中在几个方向。如果只有一个显著奇异值，变化就接近秩一。",
+      "details": "SVD 将矩阵分解为 UΣVᵀ。非零奇异值的数量等于矩阵的秩，数值实验要考虑误差阈值。",
+      "caveat": "接近秩一与严格秩一有区别；矩阵结构不能单独证明方向的行为含义。",
+      "relatedIDs": [
+        "rank-one-edit",
+        "tensor"
+      ],
+      "category": "这次脑部手术的手法",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "扫描修改前后的权重差，看变化集中在几个方向。如果只有一个显著奇异值，变化就接近秩一。"
+    },
+    {
+      "id": "probe",
+      "title": "差均值探针",
+      "english": "Difference-of-Means Probe",
+      "summary": "对比两组内部状态，找出明显的差异方向。",
+      "analogy": "像做对照 CT：分别收集会复读和能正常完成时的中间草稿，比较平均差异，得到候选方向。",
+      "details": "分别计算两组样本隐状态的均值，再相减，通常还需归一化和独立样本、干预实验验证。",
+      "caveat": "任意两次运行相减并不能精确定位病灶。样本、层、位置和混杂因素都很重要。",
+      "relatedIDs": [
+        "hidden-state",
+        "direction-projection",
+        "thinking-loop"
+      ],
+      "category": "怎么找到病灶与复现的",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像做对照 CT：分别收集会复读和能正常完成时的中间草稿，比较平均差异，得到候选方向。"
+    },
+    {
+      "id": "model-files",
+      "title": "checkpoint、safetensors 与 GGUF",
+      "english": "Model checkpoints & file formats",
+      "summary": "一个是模型保存点，另两个是装权重的文件格式。",
+      "analogy": "checkpoint 像游戏存档点；safetensors、GGUF 像不同的存档包装，适合不同的读取与运行场景。",
+      "details": "checkpoint 可包含权重、优化器和训练进度；safetensors 是张量序列化格式；GGUF 常用于本地模型推理。",
+      "caveat": "三者不是三种并列的同义格式。一个 checkpoint 的权重就可能保存在 safetensors 文件中。",
+      "relatedIDs": [
+        "checkpoint",
+        "safetensors",
+        "gguf"
+      ],
+      "category": "怎么找到病灶与复现的",
+      "kind": "comparison",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "checkpoint 像游戏存档点；safetensors、GGUF 像不同的存档包装，适合不同的读取与运行场景。"
+    },
+    {
+      "id": "inference-engine",
+      "title": "推理引擎：vLLM 与 llama.cpp",
+      "english": "Inference engines",
+      "summary": "加载模型文件，让模型真正生成输出的“播放器”。",
+      "analogy": "模型文件像唱片，引擎像播放器。vLLM 常用于高吞吐服务，llama.cpp 常用于个人电脑本地推理。",
+      "details": "引擎执行模型计算、管理内存和生成过程。不同引擎对模型、格式、量化和硬件的支持不同。",
+      "caveat": "服务器与个人电脑只是常见场景，不是严格边界；这两个项目也不是同一工具的别名。",
+      "relatedIDs": [
+        "vllm",
+        "llama-cpp",
+        "gguf"
+      ],
+      "category": "怎么找到病灶与复现的",
+      "kind": "comparison",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "模型文件像唱片，引擎像播放器。vLLM 常用于高吞吐服务，llama.cpp 常用于个人电脑本地推理。"
+    },
+    {
+      "id": "thinking-loop",
+      "title": "思考死循环",
+      "english": "Thinking Loop",
+      "summary": "模型在推理中反复绕圈，迟迟交不出答案。",
+      "analogy": "像考生在草稿纸上车轱辘话写同一段，重复检查、推翻，又重新开始，预算一直被消耗。",
+      "details": "某些推理轨迹反复重复相同模式，直到正常终止或因预算耗尽而被截断。",
+      "caveat": "它不是所有小模型独有的问题；也不是每段冗长推理都是死循环。",
+      "relatedIDs": [
+        "cut-share",
+        "probe"
+      ],
+      "category": "衡量犯病与治好的指标",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像考生在草稿纸上车轱辘话写同一段，重复检查、推翻，又重新开始，预算一直被消耗。"
+    },
+    {
+      "id": "cut-share",
+      "title": "截断率与 Token 上限",
+      "english": "Cut Share & Token Budget",
+      "summary": "答案没写完，就用光预算被强行叫停的比例。",
+      "analogy": "交卷铃响了，草稿还在绕圈，最终答案没来得及写完。一批任务中这类情况的比例，就是某种截断率。",
+      "details": "Token 是模型处理文本的单位。最大生成 token 数限制输出长度；截断率必须结合实验对终止条件和分母的定义理解。",
+      "caveat": "一个 token 不等于一个字。32,768 token 不能直接当作 32,768 个汉字；生成预算与总上下文长度也不同。",
+      "relatedIDs": [
+        "thinking-loop"
+      ],
+      "category": "衡量犯病与治好的指标",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "交卷铃响了，草稿还在绕圈，最终答案没来得及写完。一批任务中这类情况的比例，就是某种截断率。"
+    },
+    {
+      "id": "checkpoint",
+      "title": "模型检查点",
+      "english": "Checkpoint",
+      "summary": "模型在某个时刻保存下来的一份状态。",
+      "analogy": "像一份可以继续训练或拿来推理的模型存档。",
+      "details": "可能保存模型权重、优化器状态、调度器状态和训练进度。",
+      "caveat": "它描述保存的状态，不指定唯一的文件格式。",
+      "relatedIDs": [
+        "safetensors",
+        "model-files"
+      ],
+      "category": "复现工具补充",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像一份可以继续训练或拿来推理的模型存档。"
+    },
+    {
+      "id": "safetensors",
+      "title": "safetensors",
+      "english": "Tensor serialization",
+      "summary": "保存张量的一种文件格式。",
+      "analogy": "把模型的数字块按约定写进文件，方便读取。",
+      "details": "经常用于模型权重的序列化，可支持按需映射读取。",
+      "caveat": "它是保存格式，不是推理引擎。",
+      "relatedIDs": [
+        "tensor",
+        "checkpoint"
+      ],
+      "category": "复现工具补充",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "把模型的数字块按约定写进文件，方便读取。"
+    },
+    {
+      "id": "gguf",
+      "title": "GGUF",
+      "english": "Model file format",
+      "summary": "本地推理生态常见的一种模型文件格式。",
+      "analogy": "像适合本地播放器读取的模型包装。",
+      "details": "包含张量与模型元数据，广泛用于 llama.cpp 生态。",
+      "caveat": "GGUF 不等于量化本身，也能保存不同精度的数据。",
+      "relatedIDs": [
+        "llama-cpp",
+        "model-files"
+      ],
+      "category": "复现工具补充",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像适合本地播放器读取的模型包装。"
+    },
+    {
+      "id": "vllm",
+      "title": "vLLM",
+      "english": "Inference & serving",
+      "summary": "面向高吞吐模型推理与服务的引擎。",
+      "analogy": "让许多请求共用模型服务时，更有效地组织计算和缓存。",
+      "details": "提供推理、请求调度、批处理和 KV 缓存管理等能力。",
+      "caveat": "具体支持范围依赖版本与硬件。",
+      "relatedIDs": [
+        "inference-engine"
+      ],
+      "category": "复现工具补充",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "让许多请求共用模型服务时，更有效地组织计算和缓存。"
+    },
+    {
+      "id": "llama-cpp",
+      "title": "llama.cpp",
+      "english": "Local inference",
+      "summary": "在多种硬件上运行大模型的推理项目。",
+      "analogy": "像个人电脑上的轻量播放器，也能集成进其他程序。",
+      "details": "常用于 GGUF 模型，提供命令行、服务和可集成的库。",
+      "caveat": "不只运行 Llama 家族模型，需核对具体架构支持。",
+      "relatedIDs": [
+        "gguf",
+        "inference-engine"
+      ],
+      "category": "复现工具补充",
+      "kind": "concept",
+      "sourceTitle": "示例概念笔记",
+      "sourceExcerpt": "像个人电脑上的轻量播放器，也能集成进其他程序。"
+    }
+  ],
+  "collection": {
+    "id": "model-brain-surgery",
+    "title": "给模型做一次脑部手术",
+    "subtitle": "从模型内部出发，一路读到实验指标。",
+    "entryIDs": [
+      "weight-parameter",
+      "tensor",
+      "residual-stream",
+      "mlp-down-proj",
+      "hidden-state",
+      "gradient-backprop",
+      "direction-projection",
+      "ablation",
+      "rank-one-edit",
+      "svd",
+      "probe",
+      "model-files",
+      "inference-engine",
+      "thinking-loop",
+      "cut-share"
+    ],
+    "createdAt": "2026-11-15T00:00:00Z"
+  }
+}

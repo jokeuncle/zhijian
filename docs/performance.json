@@ -1,0 +1,14 @@
+{
+  "batch_import_ms": 676.5350103378296,
+  "database_mb": 65.35168,
+  "english_median_ms": 0.36895275115966797,
+  "english_p95_ms": 0.4220008850097656,
+  "entry_count": 10000,
+  "first_page_median_ms": 5.980014801025391,
+  "first_page_p95_ms": 6.891965866088867,
+  "indexed_chinese_median_ms": 28.481006622314453,
+  "indexed_chinese_p95_ms": 33.30802917480469,
+  "reopen_ms": 3.020048141479492,
+  "short_chinese_median_ms": 29.172062873840332,
+  "short_chinese_p95_ms": 36.89002990722656
+}
