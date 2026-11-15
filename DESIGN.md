@@ -209,6 +209,8 @@ The detail content has a maximum width (700pt), horizontal padding (40pt), top p
 
 Related-concept links use ConceptFlowLayout. Each link is measured at its natural width; oversized labels are measured again against the available width. Links wrap with equal horizontal and vertical gaps (8pt), without stretching to fill a row.
 
+The sidebar gives all remaining vertical space to its scrollable article collections. It has no promotional quote card; review remains available through “温故知新”. Collection titles show their full text on hover, and native scroll indicators make the list discoverable. An independent 11pt search field filters titles and subtitles after a 160ms debounce. The adjacent count and 10pt sort menu support recently read, newest and title order; changing this search never changes the selected entry or entry search. Trash and local storage controls stay at the bottom.
+
 The collection path renders at most 24 nearby positions. It starts up to 12 positions before the current position, clamped to the collection ends. Markers have a visible height (5pt), an interaction height (17pt) and inter-marker gaps (3pt). Index rows use a lazy stack with row gaps (4pt), load in pages of 60 and scroll the selection into view. Preserve the product contract of debounced cancellable search and database work off the main actor; no runtime performance result is asserted here.
 
 **The Reading First Rule.** Keep the reading pane flexible, the index bounded and related concepts at their intrinsic width. Resizing must preserve a readable column and vertical scrolling.
@@ -233,13 +235,13 @@ QuietIconButton is a plain SF Symbol button with a square interaction frame (30 
 
 ### Search and Index Navigation
 
-The search field combines a magnifier, a plain TextField, and either the empty-state Command-F hint or a clear action. It uses the paper surface, control radius, control-inset padding and the fine field stroke. Programmatic search focus is connected to FocusState. Filtering stays in the native menu beside the entry count; loading replaces the index footer with the current search status.
+The search field combines a magnifier, a plain TextField, and either the empty-state Command-F hint or a clear action. It uses the paper surface, control radius, control-inset padding and the fine field stroke. Programmatic search focus is connected to FocusState. Filtering stays in the native menu beside the entry count; loading replaces the entry count with the current search status. Entry totals appear only beside this filter; navigation rows and heading copy do not repeat them. Generic index footer and introductory slogans are omitted.
 
 Concept rows use horizontal padding (10pt), vertical padding (11pt) and the control radius. Default rows are transparent, hovered rows use paper, and selected rows use selection. Selected titles become semibold; selected state takes precedence over hover. Ordered-unit numbers use monospaced digits (10pt) in a fixed column (19pt). Favorite and understood icons use moss. The review section omits summaries for every queue row. Selection is exposed to accessibility.
 
 ### Progressive Reading
 
-The concept title, optional English name and leading explanation precede the analogy. Technical detail and source context are collapsed on a newly selected entry and use native DisclosureGroup controls. Caveats use note paper, the button radius and callout-inset padding, with a rust heading. Reading text remains selectable. Source links appear only when a stored URL exists; built-in user-note examples identify their unverified source context.
+The concept title, optional English name and leading explanation precede the analogy. Technical detail and source context are collapsed on a newly selected entry and use native DisclosureGroup controls. Empty technical detail (including whitespace-only detail and caveats) has no disclosure. The rule beneath technical detail leaves 24pt before the note card. Caveats use note paper, the button radius and callout-inset padding, with a rust heading. Reading text remains selectable. Source links appear only when a stored URL exists; built-in user-note examples identify their unverified source context.
 
 ### Related-Concept Links
 
@@ -247,13 +249,21 @@ Compact plain buttons use the index surface, moss text, chip radius and the fine
 
 ### Personal-Note Card
 
-The note card uses note paper, the note radius and card-inset padding. The editor has a bounded height (88–150pt), system text and a placeholder only when empty. Dirty drafts show “尚未保存” and remain cached by entry when navigating. Save is disabled when unchanged, conflicted, already saving or in trash; the editor is disabled in trash.
+The note card uses note paper, the note radius and card-inset padding. The native NSTextView editor has a bounded height (110pt), 14pt system text and 5pt added line spacing. Placeholder and input use the same text container origin (0pt horizontal, 6pt vertical inset); the placeholder appears only when empty and unfocused, so it never collides with the caret. Dirty drafts show “尚未保存” and remain cached by entry when navigating. Save is disabled when unchanged, conflicted, already saving or in trash; the editor is disabled in trash.
 
 If an external revision changes the note while a draft is dirty, keep the draft, show the latest note on request and offer “使用最新理解” or “保留我的草稿”. Saving stays disabled until that choice resolves the conflict. An unrelated revision can advance the observed revision without discarding the draft.
 
+### Focused Reading
+
+The book button in the reader header and ⌘⇧L toggle a single centered reading column at the existing maximum measure (700pt). Sidebar and concept index are removed from layout; returning restores the same selected section and entry. The focused header retains an explicit “返回词库” action, quiet source context, previous/next controls and a more menu. Edit, favorite and history actions move into that menu, and the mastery badge is omitted. Header insets shrink to 12pt above and 10pt below. Notes are disclosed on demand; dirty drafts remain visible and are retained through mode and entry switches. ⌘F leaves focus mode and focuses entry search. Recall remains a separate mode and continues to conceal answers. Focus mode is a transient presentation choice; reading positions continue to use the existing per-library preferences.
+
+### Reading Continuity
+
+The default workspace opens the complete library rather than a fixed seed collection. The last section and selected entry per section are stored in system preferences, scoped by a UUID held in the library metadata. Reader scroll offsets and technical/source disclosure states are stored per section and entry, with a maximum of 500 positions. Deleted or missing selections fall back to the first valid result. Restoration locates a bounded 60-entry page around the selected ID; previous pages remain available. Native scroll tracking coalesces preference writes for 200ms, flushes on termination, and clamps offsets to the current document height after layout. No machine path, account or seed entry is part of this state.
+
 ### Collection Path and Recall
 
-Path positions use rule at rest and accent for the selected concept. Each marker has an accessible unit label and remains a plain native button. Previous and next links preserve collection order in the reading pane.
+Path positions use rule at rest and accent for the selected concept. Each marker has an accessible unit label and remains a plain native button. Previous and next controls appear in the reading header and footer for all lists. ⌘↑ and ⌘↓ switch entries using the current list order and filters; collection reading retains its article path when unfiltered. Reaching the loaded boundary fetches the next bounded page. The load-more control is centered in the index and uses 11pt text.
 
 The supplied recall capture shows the concept identity, source context and a “看看解释” action before the answer. The queue remains title-only in review.
 
@@ -262,6 +272,8 @@ The supplied recall capture shows the concept identity, source context and a “
 ### Workspace Feedback
 
 Opening the library uses a native progress view. Empty library and trash states use ContentUnavailableView; only the library state offers first-concept creation. A confirmation toast uses an ink Capsule with paper text, horizontal padding (18pt), vertical padding (12pt) and bottom offset (22pt); it does not intercept input. Failures use the native “这次操作没有完成” alert with acknowledgement and refresh actions. Editing, import, agent connection and history use native sheets.
+
+When the trash is empty, the reader owns the single empty-state message. The index retains its heading and global library actions, but omits zero counts, the disabled clear button, search, filters, list placeholder and reading footer. When trash contains entries, search and clear controls return; filtered no-results is distinct from an empty trash and offers clearing the filters.
 
 ## Do's and Don'ts
 

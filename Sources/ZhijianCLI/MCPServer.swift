@@ -72,6 +72,11 @@ final class MCPServer {
             return try output(store.update(id: string("id"), patch: LibraryJSON.decoder().decode(EntryPatch.self, from: data), expectedRevision: integer("expected_revision"), actor: "mcp"))
         case "delete_entry": return try output(store.trash(id: string("id"), expectedRevision: integer("expected_revision"), actor: "mcp"))
         case "restore_entry": return try output(store.restore(id: string("id"), expectedRevision: integer("expected_revision"), actor: "mcp"))
+        case "empty_trash":
+            guard let confirm = a["confirm"] as? NSNumber, CFGetTypeID(confirm) == CFBooleanGetTypeID(), confirm.boolValue else {
+                throw LibraryError.invalid("永久清空废纸篓不可恢复，需要用户明确授权并传 confirm: true。")
+            }
+            return try output(["deleted": store.emptyTrash(actor: "mcp")])
         case "review_entry": return try output(store.recordReview(id: string("id"), rating: integer("rating"), expectedRevision: integer("expected_revision"), actor: "mcp"))
         case "list_collections": return try output(store.collections())
         case "library_stats": return try output(store.stats())
@@ -106,9 +111,9 @@ final class MCPServer {
     static func schema(_ properties: [String:Any], required: [String] = []) -> [String:Any] {
         ["type":"object","properties":properties,"required":required,"additionalProperties":false]
     }
-    static func tool(_ name: String, _ description: String, _ props: [String:Any] = [:], required: [String] = [], read: Bool = false) -> [String:Any] {
+    static func tool(_ name: String, _ description: String, _ props: [String:Any] = [:], required: [String] = [], read: Bool = false, destructive: Bool = false) -> [String:Any] {
         ["name":name,"description":description,"inputSchema":schema(props,required:required),
-         "annotations":["readOnlyHint":read,"destructiveHint":false,"openWorldHint":false]]
+         "annotations":["readOnlyHint":read,"destructiveHint":destructive,"openWorldHint":false]]
     }
     static var tools: [[String:Any]] {
         let text: [String:Any] = ["type":"string"], number: [String:Any] = ["type":"integer"]
@@ -121,6 +126,7 @@ final class MCPServer {
             tool("update_entry","仅修改 patch 中的字段；expected_revision 防止覆盖并发更新。",identity.merging(["patch":schema(patch)]) { _,new in new },required:["id","expected_revision","patch"]),
             tool("delete_entry","将词条移入可恢复的废纸篓。",identity,required:["id","expected_revision"]),
             tool("restore_entry","从废纸篓恢复词条。",identity,required:["id","expected_revision"]),
+            tool("empty_trash","永久清空全部废纸篓词条及其历史，清理关联引用。不可恢复；仅在用户明确要求永久清空时调用。",["confirm":["type":"boolean","const":true]],required:["confirm"],destructive:true),
             tool("review_entry","记录复习：0 还没懂、1 有点模糊、2 能讲明白。",identity.merging(["rating":["type":"integer","enum":[0,1,2]]]) { _,new in new },required:["id","expected_revision","rating"]),
             tool("list_collections","读取文章学习路径与有序 entryIDs。",read:true),
             tool("get_history","读取词条最近 50 次改动及快照。",["id":text],required:["id"],read:true),

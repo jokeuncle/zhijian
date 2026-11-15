@@ -24,12 +24,19 @@ scripts/run.sh
 - 收藏、最近阅读、学习状态和全文搜索帮助找回概念。
 - 温故知新先回想，再揭晓解释。选择还没懂 / 有点模糊 / 能讲明白，安排下次回看。
 - 删除进入废纸篓；历史可恢复旧内容，保留当前学习进度。
+- 废纸篓内可点击“清空废纸篓…”；确认后永久删除全部废纸篓词条及其历史，同时清理关联和阅读集引用，无法恢复。CLI 使用 `scripts/zhijian empty-trash --yes`。
 - 左侧阅读集旁的加号可粘贴或导入 Markdown / JSON。JSON 备份保留词条、关系、个人笔记、学习状态与阅读集；Markdown 是便于阅读和迁移的文字导出。
+
+点击词条顶部的书本按钮，或按 ⌘⇧L 进入专注阅读：正文居中，两侧导航收起，笔记按需展开。点击“返回词库”恢复三栏，⌘F 也会返回词库并开始搜索。词条总数只在列表上方显示一次。
+
+阅读集支持独立搜索，以及最近阅读、最近收录和名称排序。每个阅读集分别记住词条、详情展开状态与滚动位置，重启后恢复上次的阅读现场。阅读偏好按词库 ID 隔离，使用系统 UserDefaults 保存；无需指定机器路径或配置个人账户。
 
 | 快捷键 | 操作 |
 |---|---|
 | ⌘ N | 新建词条 |
 | ⌘ F | 搜索 |
+| ⌘ ↑ / ⌘ ↓ | 上一条 / 下一条（末尾自动加载下一页） |
+| ⌘ ⇧ L | 进入 / 退出专注阅读 |
 | ⌘ E | 编辑当前词条 |
 | ⌘ D | 收藏 / 取消收藏 |
 | ⌘ ⇧ I | 导入阅读笔记 |
@@ -75,7 +82,7 @@ codex mcp add zhijian -- "$PWD/scripts/zhijian" mcp
 
 该命令会向当前用户的 Codex 注册本地工具；执行后可用 `codex mcp get zhijian` 检查。下载安装版请优先使用应用内生成的命令，并先把应用放到固定安装位置。仓库也提供 `.codex/config.toml`，供支持并信任项目配置的客户端使用；项目配置是否加载，以客户端实际结果为准。CLI 与 MCP 的实际 stdio 连接均有独立进程验收。
 
-工具包括 `search_entries`、`get_entry`、`create_entry`、`update_entry`、`delete_entry`、`restore_entry`、`review_entry`、`list_collections`、`get_history`、`revert_entry`、`import_entries`、`library_stats`。现有词条的写操作需要 `expected_revision`；冲突会返回错误，避免覆盖其他窗口或 Agent 的新内容。
+工具包括 `search_entries`、`get_entry`、`create_entry`、`update_entry`、`delete_entry`、`restore_entry`、`empty_trash`、`review_entry`、`list_collections`、`get_history`、`revert_entry`、`import_entries`、`library_stats`。现有词条的单条写操作需要 `expected_revision`；冲突会返回错误，避免覆盖其他窗口或 Agent 的新内容。`empty_trash` 仅用于用户明确要求永久清空时，须传 `confirm: true`。
 
 Codex 的本地 MCP 配置与传输说明见 [OpenAI 官方文档](https://learn.chatgpt.com/docs/extend/mcp)。
 

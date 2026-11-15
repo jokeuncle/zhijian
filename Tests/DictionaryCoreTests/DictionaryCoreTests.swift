@@ -28,6 +28,62 @@ private final class DictionaryCoreTests: XCTestCase {
         return folder.appendingPathComponent("library.sqlite").path
     }
 
+    func testReadingStateIsolationSortingAndRestart() throws {
+        let suiteName="zhijian-reading-check-"+UUID().uuidString
+        let defaults=UserDefaults(suiteName:suiteName)!
+        defer { defaults.removePersistentDomain(forName:suiteName) }
+        let path=location(), store=try DictionaryStore(path:path,seed:false)
+        let libraryID=try store.libraryIdentifier()
+        XCTAssertEqual(try DictionaryStore(path:path,seed:false).libraryIdentifier(),libraryID)
+        let otherID=try DictionaryStore(path:location(),seed:false).libraryIdentifier()
+        XCTAssertEqual(libraryID == otherID,false)
+        let preferences=ReadingWorkspacePreferences(defaults:defaults,libraryID:libraryID)
+        var state=preferences.load()
+        state.recordSelection(section:"collection:article-a",entryID:"unit-87",at:Date(timeIntervalSince1970:100))
+        state.recordPosition(section:"collection:article-a",entryID:"unit-87",position:ReadingPosition(offset:420,technicalExpanded:true,sourceExpanded:true))
+        state.collectionOrder = .title; preferences.save(state)
+        let restored=ReadingWorkspacePreferences(defaults:defaults,libraryID:libraryID).load()
+        XCTAssertEqual(restored.section,"collection:article-a")
+        XCTAssertEqual(restored.selectedEntries["collection:article-a"],"unit-87")
+        XCTAssertEqual(restored.positions["collection:article-a"]?["unit-87"]?.offset,420)
+        XCTAssertEqual(restored.positions["collection:article-a"]?["unit-87"]?.technicalExpanded,true)
+        XCTAssertEqual(restored.collectionOrder,.title)
+        XCTAssertEqual(ReadingWorkspacePreferences(defaults:defaults,libraryID:otherID).load().selectedEntries.isEmpty,true)
+        let articles=[ReadingCollection(id:"article-a",title:"Alpha 向量",subtitle:"Representation",entryIDs:[],createdAt:Date(timeIntervalSince1970:1)),ReadingCollection(id:"article-b",title:"Beta",entryIDs:[],createdAt:Date(timeIntervalSince1970:2))]
+        XCTAssertEqual(restored.collections(articles,matching:"  向量  ",order:.newest).map(\.id),["article-a"])
+        XCTAssertEqual(restored.collections(articles,matching:"REPRESENTATION",order:.title).map(\.id),["article-a"])
+        XCTAssertEqual(restored.collections(articles,matching:"",order:.recentlyRead).map(\.id),["article-a","article-b"])
+        XCTAssertEqual(restored.collections(articles,matching:"",order:.newest).map(\.id),["article-b","article-a"])
+        XCTAssertEqual(restored.collections(articles,matching:"",order:.title).map(\.id),["article-a","article-b"])
+        XCTAssertEqual(restored.collections(articles,matching:"missing",order:.title).isEmpty,true)
+        for i in 0..<510 { state.recordPosition(section:"all",entryID:"unit-\(i)",position:ReadingPosition(offset:Double(i))) }
+        XCTAssertEqual(state.positions.values.reduce(0) { $0+$1.count },500)
+        defaults.set(Data("invalid json".utf8),forKey:"reading-workspace-v1."+libraryID)
+        XCTAssertEqual(preferences.load().section,"all")
+    }
+
+    func testAnchoredPaginationRespectsFiltersAndMissingEntries() throws {
+        let store=try DictionaryStore(path:location(),seed:false)
+        _ = try store.importBatch(ImportBatch(entries:(0..<130).map { EntryDraft(id:"anchor-\($0)",title:String(format:"Unit %03d",$0),summary:"anchor test") },collectionTitle:"Pagination article"))
+        var query=LibraryQuery(); query.anchorEntryID="anchor-87"
+        let page=try store.list(query)
+        XCTAssertEqual(page.offset,60); XCTAssertEqual(page.entries.count,60)
+        XCTAssertEqual(page.entries.contains { $0.id == "anchor-87" },true)
+        query.collectionID=try store.collections().first!.id
+        XCTAssertEqual(try store.list(query).offset,60)
+        query.text="Unit 087"
+        XCTAssertEqual(try store.list(query).offset,0)
+        XCTAssertEqual(try store.list(query).entries.map(\.id),["anchor-87"])
+        query.text=""; query.favoritesOnly=true
+        XCTAssertEqual(try store.list(query).entries.count,0)
+        query.favoritesOnly=false
+        _ = try store.trash(id:"anchor-87",expectedRevision:1)
+        XCTAssertEqual(try store.list(query).offset,0)
+        XCTAssertEqual(try store.list(query).entries.contains { $0.id == "anchor-87" },false)
+        query.anchorEntryID="not-found"
+        XCTAssertEqual(try store.list(query).offset,0)
+    }
+
     func testPersistenceAndUnicodeSearch() throws {
         let path = location()
         let first = try DictionaryStore(path: path, seed: false)
@@ -139,10 +195,54 @@ private final class DictionaryCoreTests: XCTestCase {
         query.entryID="p-84"; query.offset=0
         XCTAssertEqual(try a.list(query).total,1)
     }
+
+    func testEmptyTrashCleansRelationsHistoryAndCollections() throws {
+        let path = location(), store = try DictionaryStore(path:path, seed:false)
+        _ = try store.importBatch(ImportBatch(entries:[
+            EntryDraft(id:"remove", title:"删除对象", summary:"专用删除检索词"),
+            EntryDraft(id:"keep", title:"保留对象", summary:"保留解释", sourceTitle:"原始来源", personalNote:"个人笔记", relatedIDs:["remove"]),
+            EntryDraft(id:"last", title:"路径末项", summary:"末项", relatedIDs:["keep"])
+        ], collectionTitle:"保留顺序"))
+        // Cross both entry and history page boundaries.
+        _ = try store.importBatch(ImportBatch(entries:(0..<205).map {
+            EntryDraft(id:"extra-\($0)", title:"保留批次 \($0)", summary:"解释", relatedIDs:["remove"])
+        }))
+        _ = try store.trash(id:"remove", expectedRevision:1)
+        let replacement = try store.create(EntryDraft(title:"删除对象", summary:"同名新条目"))
+        let observer = try DictionaryStore(path:path, seed:false), version = try observer.dataVersion()
+        XCTAssertEqual(try store.emptyTrash(actor:"check"), 1)
+        XCTAssertGreaterThan(try observer.dataVersion(), version)
+        XCTAssertEqual(try store.stats().trash, 0)
+        XCTAssertEqual(try store.stats().entries, 208)
+        XCTAssertThrowsError(try store.entry(id:"remove"))
+        XCTAssertThrowsError(try store.restore(id:"remove", expectedRevision:2))
+        XCTAssertEqual(try store.history(id:"remove").count, 0)
+        var trash = LibraryQuery(text:"专用删除检索词"); trash.trashOnly = true
+        XCTAssertEqual(try store.list(trash).total, 0)
+        XCTAssertEqual(try store.collections(includeTrash:true).first?.entryIDs, ["keep","last"])
+        let kept = try store.entry(id:"keep")
+        XCTAssertEqual(kept.content.personalNote, "个人笔记")
+        XCTAssertEqual(kept.content.sourceTitle, "原始来源")
+        XCTAssertEqual(kept.content.relatedIDs, [])
+        XCTAssertEqual(kept.revision, 2)
+        XCTAssertEqual(try store.entry(id:"extra-204").content.relatedIDs, [])
+        XCTAssertEqual(try store.entry(id:replacement.id).summary, "同名新条目")
+        let history = try store.history(id:"keep")
+        XCTAssertEqual(history.allSatisfy { $0.snapshot.content.relatedIDs.isEmpty }, true)
+        _ = try store.revert(id:"keep", historyID:history.last!.id, expectedRevision:kept.revision)
+        let archive = try store.exportArchive()
+        XCTAssertEqual(archive.entries.contains { $0.id == "remove" }, false)
+        let destination = try DictionaryStore(path:location(), seed:false)
+        _ = try destination.importArchive(archive)
+        XCTAssertEqual(try destination.stats().entries, 208)
+        XCTAssertEqual(try store.emptyTrash(), 0)
+    }
 }
 
 private let suite = DictionaryCoreTests()
 let checks: [(String, () throws -> Void)] = [
+    ("Portable reading state, restart, sorting and library isolation",suite.testReadingStateIsolationSortingAndRestart),
+    ("Anchored pagination respects collection, search, filters and deletion",suite.testAnchoredPaginationRespectsFiltersAndMissingEntries),
     ("Persistence and Unicode/escaped search", suite.testPersistenceAndUnicodeSearch),
     ("Concurrent stale revision and note preservation", suite.testStaleRevisionDoesNotOverwriteNewContent),
     ("Trash, restore and persisted review", suite.testTrashRestoreAndReviewSurviveRestart),
@@ -151,7 +251,8 @@ let checks: [(String, () throws -> Void)] = [
     ("15-unit seed and backup round trip", suite.testSeedAndArchiveRoundTrip),
     ("User-format Markdown parsing", suite.testMarkdownNumberedNotesImport),
     ("Trash preserves collection order and reused-name backups",suite.testTrashKeepsCollectionPositionAndBackupWithReusedName),
-    ("Bounded pagination and external connection invalidation",suite.testPaginationExactFilteringAndExternalChangeVersion)
+    ("Bounded pagination and external connection invalidation",suite.testPaginationExactFilteringAndExternalChangeVersion),
+    ("Permanent trash cleanup, references, history and archive integrity",suite.testEmptyTrashCleansRelationsHistoryAndCollections)
 ]
 for (name, check) in checks {
     let before = failures

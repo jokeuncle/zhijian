@@ -63,6 +63,16 @@ public final class DictionaryStore: @unchecked Sendable {
         }
     }
 
+    /// A portable identity stored with the library, independent of its filesystem location.
+    public func libraryIdentifier() throws -> String {
+        try locked { try db.transaction {
+            if let id=try db.rows("SELECT value FROM metadata WHERE key='library-id'").first?["value"] { return id }
+            let id=UUID().uuidString.lowercased()
+            try db.execute("INSERT INTO metadata(key,value) VALUES('library-id',?)",[.text(id)])
+            return id
+        } }
+    }
+
     public func dataVersion() throws -> Int { try locked { try db.scalar("PRAGMA data_version") } }
 
     public func list(_ query: LibraryQuery = LibraryQuery()) throws -> EntryPage {
@@ -95,13 +105,18 @@ public final class DictionaryStore: @unchecked Sendable {
             let count = try db.scalar("SELECT COUNT(*)" + from, values)
             let position = query.collectionID == nil ? "NULL AS position" : "ce.position AS position"
             let sort = query.collectionID != nil ? "ce.position ASC" : (query.recentOnly ? "e.opened_at DESC,e.id" : (query.dueOnly ? "e.due_at ASC,e.title_key" : "e.title_key ASC,e.id"))
-            let rows = try db.rows("SELECT e.id,e.title,e.english,e.summary,e.category,e.kind,e.mastery,e.favorite,\(position)" + from + " ORDER BY \(sort) LIMIT ? OFFSET ?", values + [.int(query.limit), .int(query.offset)])
+            var offset=query.offset
+            if let anchor=query.anchorEntryID,
+               let ordinal=try db.rows("SELECT ordinal FROM (SELECT e.id,ROW_NUMBER() OVER (ORDER BY \(sort)) AS ordinal" + from + ") WHERE id=?",values + [.text(anchor)]).first?["ordinal"].flatMap(Int.init) {
+                offset=((ordinal-1)/query.limit)*query.limit
+            }
+            let rows = try db.rows("SELECT e.id,e.title,e.english,e.summary,e.category,e.kind,e.mastery,e.favorite,\(position)" + from + " ORDER BY \(sort) LIMIT ? OFFSET ?", values + [.int(query.limit), .int(offset)])
             let summaries = rows.map { row in
                 EntrySummary(id: row["id"]!, title: row["title"]!, english: row["english"]!, summary: row["summary"]!,
                              category: row["category"]!, kind: EntryKind(rawValue: row["kind"]!) ?? .concept,
                              mastery: Mastery(rawValue: row["mastery"]!) ?? .new, favorite: row["favorite"] == "1", position: row["position"].flatMap(Int.init))
             }
-            return EntryPage(entries: summaries, total: count, offset: query.offset)
+            return EntryPage(entries: summaries, total: count, offset: offset)
         }
     }
 
@@ -153,6 +168,55 @@ public final class DictionaryStore: @unchecked Sendable {
         try mutate(id: id, expectedRevision: expectedRevision, action: "restore", actor: actor) { entry in
             var entry = entry; entry.deletedAt = nil; return entry
         }
+    }
+
+    /// Permanently removes only entries currently in the trash, in one transaction.
+    public func emptyTrash(actor: String = "desktop") throws -> Int {
+        try locked { try db.transaction {
+            let ids = Set(try db.rows("SELECT id FROM entries WHERE deleted_at IS NOT NULL").compactMap { $0["id"] })
+            guard !ids.isEmpty else { return 0 }
+            var cursor = 0
+            while true {
+                let rows = try db.rows("SELECT rowid AS cursor,payload FROM entries WHERE deleted_at IS NULL AND rowid>? ORDER BY rowid LIMIT 200", [.int(cursor)])
+                guard !rows.isEmpty else { break }
+                for row in rows {
+                    cursor = Int(row["cursor"]!)!
+                    var entry = try LibraryJSON.decoder().decode(Entry.self, from: Data(row["payload"]!.utf8))
+                    let retained = entry.content.relatedIDs.filter { !ids.contains($0) }
+                    if retained != entry.content.relatedIDs {
+                        entry.content.relatedIDs = retained
+                        entry.revision += 1; entry.updatedAt = Date()
+                        try save(entry, action: "purge-relations", actor: actor)
+                    }
+                }
+            }
+            for var collection in try collections(includeTrash: true) {
+                let retained = collection.entryIDs.filter { !ids.contains($0) }
+                if retained != collection.entryIDs {
+                    collection.entryIDs = retained; try saveCollection(collection)
+                }
+            }
+            try db.execute("DELETE FROM history WHERE entry_id IN (SELECT id FROM entries WHERE deleted_at IS NOT NULL)")
+            // Old snapshots must remain usable without restoring dangling relations.
+            cursor = 0
+            while true {
+                let rows = try db.rows("SELECT id,snapshot FROM history WHERE id>? ORDER BY id LIMIT 200", [.int(cursor)])
+                guard !rows.isEmpty else { break }
+                for row in rows {
+                    cursor = Int(row["id"]!)!
+                    var snapshot = try LibraryJSON.decoder().decode(Entry.self, from: Data(row["snapshot"]!.utf8))
+                    let retained = snapshot.content.relatedIDs.filter { !ids.contains($0) }
+                    if retained != snapshot.content.relatedIDs {
+                        snapshot.content.relatedIDs = retained
+                        try db.execute("UPDATE history SET snapshot=? WHERE id=?", [.text(try LibraryJSON.string(snapshot)), .int(cursor)])
+                    }
+                }
+            }
+            try db.execute("DELETE FROM entries_fts WHERE id IN (SELECT id FROM entries WHERE deleted_at IS NOT NULL)")
+            try db.execute("DELETE FROM collection_entries WHERE entry_id IN (SELECT id FROM entries WHERE deleted_at IS NOT NULL)")
+            try db.execute("DELETE FROM entries WHERE deleted_at IS NOT NULL")
+            return ids.count
+        } }
     }
 
     public func recordReview(id: String, rating: Int, expectedRevision: Int, actor: String = "desktop") throws -> Entry {

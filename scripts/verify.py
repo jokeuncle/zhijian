@@ -88,6 +88,20 @@ with tempfile.TemporaryDirectory(prefix="zhijian-verify-") as folder:
     assert invalid["result"]["isError"] and cli("list","--query","原子有效")["total"]==0
     batch=call("import_entries",{"entries":[{"id":"forward-a","title":"正向关联甲","summary":"解释甲","relatedIDs":["forward-b"]},{"id":"forward-b","title":"正向关联乙","summary":"解释乙"}],"collectionTitle":"Agent 阅读路径"})
     assert batch["created"]==2
+    current=call("get_entry",{"id":agent["id"]})
+    call("delete_entry",{"id":agent["id"],"expected_revision":current["revision"]})
+    cli("empty-trash",ok=False)
+    assert cli("stats")["trash"]==1
+    empty_tool=next(t for t in tools if t["name"]=="empty_trash")
+    assert empty_tool["annotations"]["destructiveHint"] is True
+    for arguments in [{},{"confirm":False},{"confirm":1}]:
+        assert request("tools/call",{"name":"empty_trash","arguments":arguments})["result"]["isError"]
+    assert call("empty_trash",{"confirm":True})["deleted"]==1
+    assert cli("stats")["trash"]==0
+    cli("get",agent["id"],ok=False)
+    assert cli("history",agent["id"])==[]
+    assert cli("empty-trash","--yes")["deleted"]==0
+    print("PASS irreversible trash cleanup requires confirmation in CLI/MCP and removes history")
     process.stdin.close(); process.wait(timeout=5)
     assert process.returncode==0 and not process.stderr.read()
     print("PASS real MCP initialize/notifications/ping/catalog/CRUD/review/history/atomic import/forward relations")

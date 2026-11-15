@@ -1,9 +1,10 @@
 #!/bin/zsh
 set -euo pipefail
 TASK_ROOT="${0:A:h:h}"
-TASK_VERSION="${1:-1.0.0-preview.1}"
+TASK_VERSION="${1:-1.0.0-preview.2}"
+TASK_BUILD_NUMBER="${2:-2}"
 cd "$TASK_ROOT"
-"$TASK_ROOT/scripts/build.sh"
+"$TASK_ROOT/scripts/build.sh" "${TASK_VERSION%%-*}" "$TASK_BUILD_NUMBER"
 TASK_NATIVE_BIN="$(swift build -c release --show-bin-path)"
 swift build -c release --triple x86_64-apple-macosx14.0 --scratch-path .build-intel --product ZhijianApp
 swift build -c release --triple x86_64-apple-macosx14.0 --scratch-path .build-intel --product zhijian

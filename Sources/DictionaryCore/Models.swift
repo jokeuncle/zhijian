@@ -140,6 +140,7 @@ public struct LibraryQuery: Sendable {
     public var text = ""
     public var collectionID: String?
     public var entryID: String?
+    public var anchorEntryID: String?
     public var category: String?
     public var mastery: Mastery?
     public var favoritesOnly = false

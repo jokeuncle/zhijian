@@ -22,11 +22,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     Button("导入阅读笔记") { model.importPresented = true }.keyboardShortcut("i",modifiers:[.command,.shift])
                 }
                 CommandGroup(after:.textEditing) {
-                    Button("搜索词条") { model.focusSearch += 1 }.keyboardShortcut("f")
+                    Button("搜索词条",action:model.searchEntries).keyboardShortcut("f")
                     Button("编辑当前词条",action:model.editSelected).keyboardShortcut("e")
                     Button("收藏当前词条",action:model.toggleFavorite).keyboardShortcut("d")
                 }
                 CommandMenu("学习") {
+                    Button(model.isReadingMode ? "退出专注阅读":"专注阅读",action:model.toggleReadingMode)
+                        .keyboardShortcut("l",modifiers:[.command,.shift]).disabled(!model.canToggleReadingMode)
+                    Divider()
+                    Button("上一条",action:model.selectPrevious).keyboardShortcut(.upArrow,modifiers:.command).disabled(!model.canSelectPrevious)
+                    Button("下一条",action:model.selectNext).keyboardShortcut(.downArrow,modifiers:.command).disabled(!model.canSelectNext)
+                    Divider()
                     Button("温故知新") { model.section = .review }.keyboardShortcut("r",modifiers:[.command,.shift])
                     Button("刷新词库") { Task { await model.refresh() } }.keyboardShortcut("r")
                     Divider()

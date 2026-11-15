@@ -6,7 +6,7 @@ struct Arguments {
     var options: [String: String] = [:]
     var flags = Set<String>()
     init(_ arguments: [String]) throws {
-        let booleans: Set<String> = ["trash", "favorites", "due", "recent", "no-seed", "help"]
+        let booleans: Set<String> = ["trash", "favorites", "due", "recent", "no-seed", "help", "yes"]
         let valueOptions: Set<String> = ["database", "json", "query", "collection", "category", "status", "limit", "offset", "revision", "rating", "actor", "count", "collection-title"]
         var index = 0
         while index < arguments.count {
@@ -44,6 +44,7 @@ enum Commands {
     zhijian create --json 文件或- [--collection ID]
     zhijian update ID --revision N --json 文件或-
     zhijian delete|restore ID --revision N
+    zhijian empty-trash --yes  （永久清空废纸篓及其历史，不可恢复）
     zhijian review ID --revision N --rating 0|1|2
     zhijian history ID
     zhijian revert ID HISTORY_ID --revision N
@@ -83,6 +84,9 @@ enum Commands {
             try emit(store.update(id: a.required(1, name: "词条 ID"), patch: LibraryJSON.decoder().decode(EntryPatch.self, from: data), expectedRevision: a.integer("revision"), actor: actor))
         case "delete": try emit(store.trash(id: a.required(1, name: "词条 ID"), expectedRevision: a.integer("revision"), actor: actor))
         case "restore": try emit(store.restore(id: a.required(1, name: "词条 ID"), expectedRevision: a.integer("revision"), actor: actor))
+        case "empty-trash":
+            guard a.flags.contains("yes") else { throw LibraryError.invalid("清空废纸篓不可恢复；确认永久删除全部废纸篓词条后，请加 --yes。") }
+            try emit(["deleted": store.emptyTrash(actor: actor)])
         case "review": try emit(store.recordReview(id: a.required(1, name: "词条 ID"), rating: a.integer("rating"), expectedRevision: a.integer("revision"), actor: actor))
         case "history": try emit(store.history(id: a.required(1, name: "词条 ID")))
         case "revert":
