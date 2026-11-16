@@ -1,0 +1,71 @@
+{
+  "entry_count": 10000,
+  "platform": "macOS-26.4.1-arm64-arm-64bit-Mach-O",
+  "binary_sha256": "c1502628a3e315d7bf04d05c829fa00f1636c4078e1a1d784e22334c0e594317",
+  "profiles": {
+    "standard": {
+      "backup_mb": 13.47,
+      "setup_import": {
+        "seconds": 1.065,
+        "peak_rss_mb": 130.58
+      },
+      "export": {
+        "seconds": 0.1,
+        "peak_rss_mb": 17.42
+      },
+      "restore": {
+        "seconds": 0.787,
+        "peak_rss_mb": 86.16
+      },
+      "all_entry_and_collection_fields_equal": true,
+      "source_history_count": 3,
+      "restored_history_count": 1
+    },
+    "long_content": {
+      "backup_mb": 154.59,
+      "setup_import": {
+        "seconds": 4.052,
+        "peak_rss_mb": 504.02
+      },
+      "export": {
+        "seconds": 0.485,
+        "peak_rss_mb": 17.42
+      },
+      "restore": {
+        "seconds": 4.962,
+        "peak_rss_mb": 104.82
+      },
+      "all_entry_and_collection_fields_equal": true,
+      "source_history_count": 3,
+      "restored_history_count": 1
+    }
+  },
+  "checks": [
+    "title_conflict: rejected with full rollback",
+    "dangling_relation: rejected with full rollback",
+    "invalid_revision: rejected with full rollback",
+    "invalid_collection: rejected with full rollback",
+    "duplicate_ids: rejected with full rollback",
+    "unsupported_version: rejected with full rollback",
+    "truncated_json: rejected with no changes",
+    "same_id: local changes preserved on repeat import",
+    "seeded_destination: initial examples retained, not an exact restore"
+  ],
+  "limitations": [
+    "Historical changes are not exported; restore creates one import history record per entry.",
+    "Reading position and app preferences are absent from LibraryArchive (source inspection).",
+    "Native backup selection uses bounded preview and file streaming; pasted/ordinary notes remain capped at 64 MB.",
+    "Measurements use local packaged CLI and separate temporary libraries, not two physical computers."
+  ],
+  "seeded_destination_extra_entries": 20,
+  "user_library_touched": false,
+  "verified_at": "2026-11-16T08:25:09.467299+00:00",
+  "native_ui_check": {
+    "backup_mb": 72.051354,
+    "preview_count": 100,
+    "visible_title_count": 8,
+    "restored_entry_count": 100,
+    "all_entry_fields_equal": true,
+    "isolated_temporary_library": true
+  }
+}

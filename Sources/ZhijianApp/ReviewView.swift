@@ -50,6 +50,6 @@ struct ReviewView:View {
         Button { Task { await model.rate(entry,rating:value); revealed=false } } label:{
             VStack(spacing:7) { Text(title).font(.system(size:13,weight:.medium)); Text(subtitle).font(.system(size:10)).foregroundStyle(Palette.secondary) }
                 .frame(maxWidth:.infinity).padding(.vertical,17).background(value==2 ? Palette.selection:Palette.note,in:RoundedRectangle(cornerRadius:8))
-        }.buttonStyle(.plain).foregroundStyle(Palette.accent)
+        }.buttonStyle(.plain).pointingHandCursor().foregroundStyle(Palette.accent)
     }
 }

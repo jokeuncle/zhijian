@@ -15,9 +15,10 @@ import DictionaryCore
             Task { @MainActor in
                 do {
                     try await model.background {
-                        let archive=try store.exportArchive()
-                        let data=markdown ? Data(LibraryExport.markdown(archive).utf8):try LibraryJSON.encoder(pretty:true).encode(archive)
-                        try data.write(to:url,options:.atomic)
+                        if markdown {
+                            let archive=try store.exportArchive()
+                            try Data(LibraryExport.markdown(archive).utf8).write(to:url,options:.atomic)
+                        } else { try store.exportArchive(to:url) }
                     }
                     model.notify("已导出到 \(url.lastPathComponent)")
                 } catch { model.error=error.localizedDescription }
@@ -32,41 +33,55 @@ struct ImportView:View {
     @State private var text=""
     @State private var batch:ImportBatch?
     @State private var archive:LibraryArchive?
+    @State private var fileArchive:ArchivePreview?
+    @State private var fileURL:URL?
     @State private var issue:String?
     @State private var parsing=false
-    private var count:Int { batch?.entries.count ?? archive?.entries.count ?? 0 }
+    private var count:Int { fileArchive?.count ?? batch?.entries.count ?? archive?.entries.count ?? 0 }
+    private var hasPreview:Bool { batch != nil || archive != nil || fileArchive != nil }
     var body:some View {
         VStack(alignment:.leading,spacing:20) {
             HStack {
                 VStack(alignment:.leading,spacing:8) { Text("把读过的，留下来。").font(Palette.heading); Text("粘贴概念笔记，或选择 Markdown / JSON 文件。").font(.system(size:12)).foregroundStyle(Palette.secondary) }
                 Spacer()
-                Button("关闭") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("关闭") { dismiss() }.keyboardShortcut(.cancelAction).pointingHandCursor()
             }
             HStack(spacing:12) {
-                Button { chooseFile() } label:{ Label("选择文件",systemImage:"doc.badge.plus") }
+                Button { chooseFile() } label:{ Label(parsing ? "正在读取…":"选择文件",systemImage:"doc.badge.plus") }.pointingHandCursor().disabled(parsing || model.isSaving)
                 Text("支持「## 词名」或「1. **词名**」，下一行写解释。").font(.system(size:11)).foregroundStyle(Palette.secondary)
             }
-            TextEditor(text:$text).font(.system(size:13,design:.monospaced)).scrollContentBackground(.hidden).padding(10).frame(minHeight:270,maxHeight:.infinity)
+            if let fileURL, fileArchive != nil {
+                VStack(alignment:.leading,spacing:14) {
+                    Label(fileURL.lastPathComponent,systemImage:"doc.text").font(.system(size:14,weight:.medium))
+                    Text("备份已就绪，确认后将恢复词条内容。").font(.system(size:12)).foregroundStyle(Palette.secondary)
+                    Button("改为粘贴笔记") { self.fileURL=nil; fileArchive=nil; text="" }.pointingHandCursor().disabled(model.isSaving)
+                }.padding(20).frame(maxWidth:.infinity,minHeight:270,maxHeight:.infinity,alignment:.topLeading)
+                    .background(Palette.index,in:RoundedRectangle(cornerRadius:8))
+            } else {
+                TextEditor(text:$text).font(.system(size:13,design:.monospaced)).scrollContentBackground(.hidden).padding(10).frame(minHeight:270,maxHeight:.infinity)
                 .background(Palette.index,in:RoundedRectangle(cornerRadius:8)).overlay(RoundedRectangle(cornerRadius:8).stroke(Palette.rule,lineWidth:1)).accessibilityLabel("待导入的笔记")
+                    .disabled(parsing || model.isSaving)
+            }
             if let issue { Text(issue).font(.system(size:12)).foregroundStyle(Palette.rust).textSelection(.enabled) }
-            if batch != nil || archive != nil {
+            if hasPreview {
                 VStack(alignment:.leading,spacing:10) {
                     Label("识别到 \(count) 个词条",systemImage:"checkmark.circle").font(.system(size:13,weight:.medium)).foregroundStyle(Palette.accent)
-                    let titles=batch?.entries.map(\.title) ?? archive?.entries.map(\.title) ?? []
+                    let titles=fileArchive?.titles ?? batch?.entries.prefix(8).map(\.title) ?? archive?.entries.prefix(8).map(\.title) ?? []
                     Text(titles.prefix(8).joined(separator:"、") + (count>8 ? " 等":"")).font(.system(size:12)).lineSpacing(4).foregroundStyle(Palette.secondary).lineLimit(3)
-                    Text(archive == nil ? "将保留原有顺序建立阅读集。重复词名会跳过，已有内容会保留。":"这是完整备份：将恢复词条、笔记和学习进度。已有 ID 保留，词名冲突时整批取消。").font(.system(size:11)).foregroundStyle(Palette.secondary)
+                    Text(archive == nil && fileArchive == nil ? "将保留原有顺序建立阅读集。重复词名会跳过，已有内容会保留。":"将恢复备份中的词条内容。已有 ID 保留，词名冲突时整批取消。").font(.system(size:11)).foregroundStyle(Palette.secondary)
                 }.padding(15).frame(maxWidth:.infinity,alignment:.leading).background(Palette.selection,in:RoundedRectangle(cornerRadius:8))
             }
             HStack {
                 Text("在本机解析和保存").font(.system(size:10)).foregroundStyle(Palette.secondary)
                 Spacer()
-                if batch == nil && archive == nil {
+                if !hasPreview {
                     Button(parsing ? "正在识别…":"预览词条") { preview() }.buttonStyle(MossButtonStyle()).disabled(text.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty || parsing)
                 } else {
                     Button(model.isSaving ? "正在收录…":"收录到知间") {
                         Task {
                             let success:Bool
-                            if let archive { success=await model.importArchive(archive) }
+                            if fileArchive != nil, let fileURL { success=await model.importArchiveFile(fileURL) }
+                            else if let archive { success=await model.importArchive(archive) }
                             else if let batch { success=await model.importBatch(batch) }
                             else { success=false }
                             if success { dismiss() }
@@ -81,8 +96,20 @@ struct ImportView:View {
         let panel=NSOpenPanel(); panel.allowedContentTypes=[.json,.plainText,.text]; panel.allowsMultipleSelection=false
         panel.begin { response in
             guard response == .OK,let url=panel.url else { return }
+            parsing=true; issue=nil; batch=nil; archive=nil; fileArchive=nil; fileURL=nil
             Task { @MainActor in
-                do { text=try await model.background { try String(contentsOf:url,encoding:.utf8) } }
+                defer { parsing=false }
+                do {
+                    let preview=try await model.background { try LibraryImport.previewArchive(at:url) }
+                    if let preview { fileURL=url; fileArchive=preview }
+                    else {
+                        text=try await model.background {
+                            let size=try url.resourceValues(forKeys:[.fileSizeKey]).fileSize ?? 0
+                            guard size <= 64_000_000 else { throw LibraryError.invalid("普通笔记文件最多 64 MB；整库迁移请使用知间 JSON 备份。") }
+                            return try String(contentsOf:url,encoding:.utf8)
+                        }
+                    }
+                }
                 catch { issue=error.localizedDescription }
             }
         }
@@ -119,13 +146,13 @@ struct AgentConnectionView:View {
     private var command:String { "codex mcp add zhijian -- '" + binary.replacingOccurrences(of:"'",with:"'\\''") + "' mcp" }
     var body:some View {
         VStack(alignment:.leading,spacing:22) {
-            HStack { Image(systemName:"terminal").font(.system(size:25,weight:.light)).foregroundStyle(Palette.accent); Spacer(); Button("完成") { dismiss() }.keyboardShortcut(.cancelAction) }
+            HStack { Image(systemName:"terminal").font(.system(size:25,weight:.light)).foregroundStyle(Palette.accent); Spacer(); Button("完成") { dismiss() }.keyboardShortcut(.cancelAction).pointingHandCursor() }
             Text("你的词典，Agent 也能读写。").font(Palette.heading)
             Text("通过本地 MCP 接入 Codex。桌面和 Agent 使用同一份词库；关闭窗口后，工具仍可独立运行。").font(.system(size:14)).lineSpacing(6)
             VStack(alignment:.leading,spacing:12) {
                 Text("在终端运行一次，连接 Codex").font(.system(size:12,weight:.medium))
                 Text(command).font(.system(size:11,design:.monospaced)).textSelection(.enabled).fixedSize(horizontal:false,vertical:true)
-                Button { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(command,forType:.string); model.notify("已复制连接命令") } label:{Label("复制连接命令",systemImage:"doc.on.doc")}.controlSize(.small)
+                Button { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(command,forType:.string); model.notify("已复制连接命令") } label:{Label("复制连接命令",systemImage:"doc.on.doc")}.controlSize(.small).pointingHandCursor()
             }.padding(18).frame(maxWidth:.infinity,alignment:.leading).background(Palette.note,in:RoundedRectangle(cornerRadius:8))
             VStack(alignment:.leading,spacing:13) {
                 Text("然后，直接这样说").font(.system(size:12,weight:.medium))
@@ -140,7 +167,7 @@ struct AgentConnectionView:View {
                 }
             }
             Text("修改有版本记录，删除可以恢复。连接命令按应用的实际位置生成；把应用移到其他目录后，可重新复制命令连接。").font(.system(size:11)).lineSpacing(5).foregroundStyle(Palette.secondary)
-            Link("查看 Codex MCP 官方文档",destination:URL(string:"https://learn.chatgpt.com/docs/extend/mcp")!).font(.system(size:11))
+            Link("查看 Codex MCP 官方文档",destination:URL(string:"https://learn.chatgpt.com/docs/extend/mcp")!).pointingHandCursor().font(.system(size:11))
         }.padding(30).frame(width:620).background(Palette.paper).foregroundStyle(Palette.ink).tint(Palette.accent)
     }
 }
@@ -152,7 +179,7 @@ struct HistoryView:View {
     @State private var loading=true
     var body:some View {
         VStack(alignment:.leading,spacing:20) {
-            HStack { VStack(alignment:.leading,spacing:7) { Text("理解，是一层层长出来的。").font(Palette.heading); Text(model.selectedEntry?.title ?? "变更历史").font(.system(size:12)).foregroundStyle(Palette.secondary) }; Spacer(); Button("完成") { dismiss() }.keyboardShortcut(.cancelAction) }
+            HStack { VStack(alignment:.leading,spacing:7) { Text("理解，是一层层长出来的。").font(Palette.heading); Text(model.selectedEntry?.title ?? "变更历史").font(.system(size:12)).foregroundStyle(Palette.secondary) }; Spacer(); Button("完成") { dismiss() }.keyboardShortcut(.cancelAction).pointingHandCursor() }
             if loading { ProgressView().frame(maxWidth:.infinity,maxHeight:.infinity) }
             else {
                 ScrollView {
@@ -169,7 +196,7 @@ struct HistoryView:View {
                                 HStack {
                                     Text(record.timestamp.formatted(date:.abbreviated,time:.shortened)).font(.system(size:10)).foregroundStyle(Palette.secondary)
                                     Spacer()
-                                    Button("还原到这一版") { Task { if await model.revert(record) { dismiss(); model.notify("已还原内容，学习进度已保留") } } }.controlSize(.small).disabled(record.snapshot.revision == model.selectedEntry?.revision || model.isSaving)
+                                    Button("还原到这一版") { Task { if await model.revert(record) { dismiss(); model.notify("已还原内容，学习进度已保留") } } }.controlSize(.small).pointingHandCursor().disabled(record.snapshot.revision == model.selectedEntry?.revision || model.isSaving)
                                 }
                             }.padding(.vertical,19)
                             Divider()

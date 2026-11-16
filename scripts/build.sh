@@ -2,7 +2,7 @@
 set -euo pipefail
 TASK_ROOT="${0:A:h:h}"
 TASK_VERSION="${1:-1.0.0}"
-TASK_BUILD_NUMBER="${2:-2}"
+TASK_BUILD_NUMBER="${2:-3}"
 if [[ ! "$TASK_VERSION" =~ '^[0-9]+\.[0-9]+\.[0-9]+$' || ! "$TASK_BUILD_NUMBER" =~ '^[0-9]+$' ]]; then
     print -u2 "版本应为 x.y.z，构建号应为非负整数。"
     exit 1

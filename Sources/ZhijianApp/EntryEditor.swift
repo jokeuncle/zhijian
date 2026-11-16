@@ -20,7 +20,7 @@ struct EntryEditor:View {
                     Text(existing == nil ? "先写一句大白话，其他细节可以慢慢补。":"这次修改会保留在变更历史里。").font(.system(size:12)).foregroundStyle(Palette.secondary)
                 }
                 Spacer()
-                Button("取消") { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("取消") { dismiss() }.keyboardShortcut(.cancelAction).pointingHandCursor()
                 Button(model.isSaving ? "正在保存…":"保存词条") {
                     draft.aliases=aliases.split(whereSeparator:{ $0=="," || $0=="，" }).map { $0.trimmingCharacters(in:.whitespaces) }.filter { !$0.isEmpty }
                     Task { if await model.saveDraft(draft,existing:existing) { dismiss() } }
@@ -39,7 +39,7 @@ struct EntryEditor:View {
                         field("分类",text:$draft.category,prompt:"例如：模型内部")
                         field("同义词 / 别名",text:$aliases,prompt:"用逗号分开；不同概念请建立关联")
                     }
-                    Picker("词条形式",selection:$draft.kind) { Text("单个概念").tag(EntryKind.concept); Text("对比学习单元").tag(EntryKind.comparison) }.pickerStyle(.segmented)
+                    Picker("词条形式",selection:$draft.kind) { Text("单个概念").tag(EntryKind.concept); Text("对比学习单元").tag(EntryKind.comparison) }.pickerStyle(.segmented).pointingHandCursor()
                     RelationPicker(draft:$draft)
                     DisclosureGroup("更完整的解释") {
                         VStack(alignment:.leading,spacing:18) {
@@ -57,7 +57,7 @@ struct EntryEditor:View {
                     multiline("我自己的理解",text:$draft.personalNote,prompt:"讲给别人听时，我会这样说……",height:85)
                 }.padding(28)
             }
-        }.frame(width:760,height:780).background(Palette.paper).foregroundStyle(Palette.ink).tint(Palette.accent)
+        }.disclosureGroupStyle(ClickableDisclosureStyle()).frame(width:760,height:780).background(Palette.paper).foregroundStyle(Palette.ink).tint(Palette.accent)
     }
     private func field(_ label:String,text:Binding<String>,prompt:String) -> some View {
         VStack(alignment:.leading,spacing:8) { Text(label).font(.system(size:12,weight:.medium)); TextField(prompt,text:text).textFieldStyle(.roundedBorder).accessibilityLabel(label) }.frame(maxWidth:.infinity,alignment:.leading)
@@ -85,14 +85,14 @@ private struct RelationPicker:View {
             if !draft.relatedIDs.isEmpty {
                 ConceptFlowLayout {
                     ForEach(draft.relatedIDs,id:\.self) { id in
-                        HStack { Text(names[id] ?? "已关联概念").lineLimit(1); Button { draft.relatedIDs.removeAll { $0==id } } label:{Image(systemName:"xmark")}.buttonStyle(.plain).help("移除关联") }.font(.system(size:11)).foregroundStyle(Palette.accent).padding(8).background(Palette.selection,in:RoundedRectangle(cornerRadius:6))
+                        HStack { Text(names[id] ?? "已关联概念").lineLimit(1); Button { draft.relatedIDs.removeAll { $0==id } } label:{Image(systemName:"xmark")}.buttonStyle(.plain).pointingHandCursor().help("移除关联") }.font(.system(size:11)).foregroundStyle(Palette.accent).padding(8).background(Palette.selection,in:RoundedRectangle(cornerRadius:6))
                     }
                 }
             }
             TextField("搜索已有概念，建立关联",text:$query).textFieldStyle(.roundedBorder).accessibilityLabel("搜索关联概念")
             if !query.isEmpty {
                 ForEach(candidates.filter { $0.id != draft.id && !draft.relatedIDs.contains($0.id) }) { entry in
-                    Button { draft.relatedIDs.append(entry.id); names[entry.id]=entry.title; query="" } label:{ Label(entry.title,systemImage:"plus.circle").font(.system(size:12)) }.buttonStyle(.plain).foregroundStyle(Palette.accent)
+                    Button { draft.relatedIDs.append(entry.id); names[entry.id]=entry.title; query="" } label:{ Label(entry.title,systemImage:"plus.circle").font(.system(size:12)) }.buttonStyle(.plain).pointingHandCursor().foregroundStyle(Palette.accent)
                 }
             }
         }.task {

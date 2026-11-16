@@ -44,14 +44,14 @@ struct Workspace: View {
                 } description: { Text(model.section == .trash ? (model.stats.trash == 0 ? "删除的词条会保留在这里，方便找回来。" : "试试其他关键词，或清除筛选条件。") : "写下一句自己的解释，或者导入一段读过的笔记。") }
                 actions: {
                     if model.section != .trash { Button("收录第一个概念",action:model.newEntry).buttonStyle(MossButtonStyle()) }
-                    else if model.stats.trash > 0 { Button("清除筛选") { model.search = ""; model.masteryFilter = nil } }
+                    else if model.stats.trash > 0 { Button("清除筛选") { model.search = ""; model.masteryFilter = nil }.pointingHandCursor() }
                 }
                 .frame(maxWidth:.infinity,maxHeight:.infinity)
             }
         }.frame(minWidth:540,maxWidth:.infinity,maxHeight:.infinity).background(Palette.paper)
         .overlay(alignment:.topLeading) {
             if model.isReadingMode && model.selectedEntry == nil {
-                Button("返回词库",action:model.toggleReadingMode).buttonStyle(.plain).padding(24)
+                Button("返回词库",action:model.toggleReadingMode).buttonStyle(.plain).pointingHandCursor().padding(24)
             }
         }
     }

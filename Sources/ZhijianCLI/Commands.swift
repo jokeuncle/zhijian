@@ -96,6 +96,9 @@ enum Commands {
         case "stats": try emit(store.stats())
         case "import":
             let path = try a.required(1, name: "文件路径")
+            if let result = try store.importArchive(from: URL(fileURLWithPath: path), actor: actor) {
+                try emit(result); return
+            }
             let data = try Data(contentsOf: URL(fileURLWithPath: path))
             if let archive = try? LibraryJSON.decoder().decode(LibraryArchive.self, from: data) { try emit(store.importArchive(archive, actor: actor)) }
             else {
@@ -105,6 +108,10 @@ enum Commands {
             }
         case "export":
             let path = try a.required(1, name: "输出路径"), url = URL(fileURLWithPath: try a.required(1, name: "输出路径"))
+            if !path.lowercased().hasSuffix(".md") {
+                let count = try store.exportArchive(to: url)
+                try emit(["path": url.path, "entries": String(count)]); return
+            }
             let archive = try store.exportArchive()
             let data = path.lowercased().hasSuffix(".md") ? Data(LibraryExport.markdown(archive).utf8) : try LibraryJSON.encoder(pretty: true).encode(archive)
             try data.write(to: url, options: .atomic); try emit(["path": url.path, "entries": String(archive.entries.count)])

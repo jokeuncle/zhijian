@@ -20,7 +20,7 @@ struct EntryDetailView:View {
             HStack(spacing:8) {
                 if model.isReadingMode {
                     Button(action:model.toggleReadingMode) { Label("返回词库",systemImage:"sidebar.left").font(.system(size:12)) }
-                        .buttonStyle(.plain).help("退出专注阅读（⌘⇧L）")
+                        .buttonStyle(.plain).pointingHandCursor().help("退出专注阅读（⌘⇧L）")
                     Spacer(minLength:12)
                 } else {
                     QuietIconButton(symbol:"book",label:"专注阅读（⌘⇧L）",action:model.toggleReadingMode).disabled(!model.canToggleReadingMode)
@@ -50,14 +50,14 @@ struct EntryDetailView:View {
                     Button("复制解释") { NSPasteboard.general.clearContents(); NSPasteboard.general.setString("\(entry.title)\n\(entry.summary)\n\n\(entry.content.analogy)",forType:.string); model.notify("已复制解释") }
                     Divider()
                     if entry.deletedAt == nil { Button("移入废纸篓",role:.destructive,action:model.trashSelected) }
-                    else { Button("恢复词条",action:model.restoreSelected) }
-                } label:{ Image(systemName:"ellipsis").frame(width:25,height:30) }.menuStyle(.borderlessButton).frame(width:27).help("更多词条操作")
+                    else { Button("恢复词条",action:model.restoreSelected).pointingHandCursor() }
+                } label:{ Image(systemName:"ellipsis").frame(width:25,height:30) }.menuStyle(.borderlessButton).pointingHandCursor().frame(width:27).help("更多词条操作")
             }.foregroundStyle(Palette.secondary).padding(.horizontal,30).padding(.top,model.isReadingMode ? 12:24).padding(.bottom,model.isReadingMode ? 10:16)
             Divider().overlay(Palette.rule)
             ScrollView {
                 VStack(alignment:.leading,spacing:0) {
                     if entry.deletedAt != nil {
-                        HStack { Label("这个词条在废纸篓中",systemImage:"trash"); Spacer(); Button("恢复词条",action:model.restoreSelected) }.font(.system(size:12)).foregroundStyle(Palette.rust).padding(13).background(Palette.note,in:RoundedRectangle(cornerRadius:8)).padding(.bottom,24)
+                        HStack { Label("这个词条在废纸篓中",systemImage:"trash"); Spacer(); Button("恢复词条",action:model.restoreSelected).pointingHandCursor() }.font(.system(size:12)).foregroundStyle(Palette.rust).padding(13).background(Palette.note,in:RoundedRectangle(cornerRadius:8)).padding(.bottom,24)
                     }
                     HStack(alignment:.top,spacing:16) {
                         VStack(alignment:.leading,spacing:10) {
@@ -105,7 +105,7 @@ struct EntryDetailView:View {
                                     }.foregroundStyle(Palette.accent).padding(.horizontal,11).padding(.vertical,8)
                                         .background(Palette.index,in:RoundedRectangle(cornerRadius:6))
                                         .overlay(RoundedRectangle(cornerRadius:6).stroke(Palette.rule,lineWidth:0.7))
-                                }.buttonStyle(.plain)
+                                }.buttonStyle(.plain).pointingHandCursor()
                             }
                         }.frame(maxWidth:.infinity,alignment:.leading).padding(.bottom,29)
                     }
@@ -123,7 +123,7 @@ struct EntryDetailView:View {
                     DisclosureGroup(isExpanded:$sourceExpanded) {
                         VStack(alignment:.leading,spacing:10) {
                             Text(entry.content.sourceTitle.isEmpty ? "手动收录":entry.content.sourceTitle).font(.system(size:12,weight:.medium))
-                            if !entry.content.sourceURL.isEmpty,let url=URL(string:entry.content.sourceURL) { Link("打开来源",destination:url).font(.system(size:12)) }
+                            if !entry.content.sourceURL.isEmpty,let url=URL(string:entry.content.sourceURL) { Link("打开来源",destination:url).pointingHandCursor().font(.system(size:12)) }
                             if !entry.content.sourceExcerpt.isEmpty { Text(entry.content.sourceExcerpt).font(.system(size:12)).lineSpacing(5).foregroundStyle(Palette.secondary).textSelection(.enabled) }
                             if ["用户提供的概念笔记","示例概念笔记"].contains(entry.content.sourceTitle) { Text("根据概念笔记整理的内置示例，补充了比喻边界；尚未关联文章原文。").font(.system(size:10)).foregroundStyle(Palette.secondary) }
                         }.frame(maxWidth:.infinity,alignment:.leading).padding(.top,12)
@@ -133,10 +133,10 @@ struct EntryDetailView:View {
                     Divider().overlay(Palette.rule).padding(.bottom,19)
                     HStack {
                         Button(action:model.selectPrevious) { Label("上一条",systemImage:"arrow.left").font(.system(size:11)) }
-                            .buttonStyle(.plain).disabled(!model.canSelectPrevious)
+                            .buttonStyle(.plain).pointingHandCursor().disabled(!model.canSelectPrevious)
                         Spacer()
                         Button(action:model.selectNext) { HStack(spacing:8) { Text("下一条"); Image(systemName:"arrow.right") }.font(.system(size:11)) }
-                            .buttonStyle(.plain).disabled(!model.canSelectNext)
+                            .buttonStyle(.plain).pointingHandCursor().disabled(!model.canSelectNext)
                     }.foregroundStyle(Palette.accent)
 
                 }.frame(maxWidth:700,alignment:.leading).padding(.horizontal,40).padding(.top,34).padding(.bottom,32).frame(maxWidth:.infinity)
@@ -145,6 +145,7 @@ struct EntryDetailView:View {
                 })
             }.id(entry.id)
         }
+        .disclosureGroupStyle(ClickableDisclosureStyle())
         .onAppear {
             resetNote(); noteExpanded=dirty
             let position=model.readingPosition(entryID:entry.id,sectionKey:sectionKey)
@@ -179,8 +180,8 @@ struct EntryDetailView:View {
                                 Text("词条中的理解已被更新，你的草稿仍保留在这里。").font(.system(size:12)).foregroundStyle(Palette.rust)
                                 DisclosureGroup("查看最新理解") { Text(entry.content.personalNote.isEmpty ? "最新版本没有个人笔记。":entry.content.personalNote).font(.system(size:13)).lineSpacing(5).textSelection(.enabled).padding(.top,8) }.font(.system(size:12))
                                 HStack {
-                                    Button("使用最新理解") { model.noteDrafts.removeValue(forKey:entry.id); resetNote() }
-                                    Button("保留我的草稿") { baseline=entry.content.personalNote; noteRevision=entry.revision; cacheDraft() }.help("核对后再次保存，将把你的草稿写入最新版本")
+                                    Button("使用最新理解") { model.noteDrafts.removeValue(forKey:entry.id); resetNote() }.pointingHandCursor()
+                                    Button("保留我的草稿") { baseline=entry.content.personalNote; noteRevision=entry.revision; cacheDraft() }.pointingHandCursor().help("核对后再次保存，将把你的草稿写入最新版本")
                                 }.controlSize(.small)
                             }
                         }
@@ -190,7 +191,7 @@ struct EntryDetailView:View {
                             Button("保存理解") {
                                 let text=note,revision=noteRevision
                                 Task { if await model.saveNote(text,entry:entry,revision:revision) { baseline=text; noteRevision=model.selectedEntry?.revision ?? revision+1; cacheDraft(); model.notify("留下了你的理解") } }
-                            }.buttonStyle(.bordered).controlSize(.small).disabled(!dirty || hasNoteConflict || model.isSaving || entry.deletedAt != nil)
+                            }.buttonStyle(.bordered).pointingHandCursor().controlSize(.small).disabled(!dirty || hasNoteConflict || model.isSaving || entry.deletedAt != nil)
                         }
                     }.padding(18).background(Palette.note,in:RoundedRectangle(cornerRadius:9)).padding(.bottom,24)
     }

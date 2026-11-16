@@ -22,6 +22,54 @@ private class XCTestCase {
 }
 
 private final class DictionaryCoreTests: XCTestCase {
+    func testStreamingArchiveFiles() throws {
+        let path=location(), store=try DictionaryStore(path:path,seed:false)
+        let text=String(repeating:"中文 🧠 \\\" { } [ ] \\n\n",count:8000)
+        _ = try store.importBatch(ImportBatch(entries:[
+            EntryDraft(id:"stream-a",title:"流式甲",summary:"解释",details:text,relatedIDs:["stream-b"]),
+            EntryDraft(id:"stream-b",title:"流式乙",summary:"解释",personalNote:"保留笔记")],collectionTitle:"原始顺序"))
+        let folder=URL(fileURLWithPath:path).deletingLastPathComponent()
+        let file=folder.appendingPathComponent("backup.json")
+        try Data("旧备份".utf8).write(to:file)
+        XCTAssertEqual(try store.exportArchive(to:file),2)
+        let before=try store.exportArchive()
+        let decoded=try LibraryJSON.decoder().decode(LibraryArchive.self,from:Data(contentsOf:file))
+        XCTAssertEqual(decoded.entries,before.entries)
+        let preview=try LibraryImport.previewArchive(at:file)
+        XCTAssertEqual(preview?.count,2); XCTAssertEqual(preview?.titles,["流式甲","流式乙"])
+        let target=try DictionaryStore(path:location(),seed:false)
+        XCTAssertEqual(try target.importArchive(from:file)?.created,2)
+        XCTAssertEqual(try target.exportArchive().entries,before.entries)
+        XCTAssertEqual(try target.collections()[0].entryIDs,["stream-a","stream-b"])
+        // Legacy sorted/pretty JSON puts collections before entries and crosses read buffers.
+        try LibraryJSON.encoder(pretty:true).encode(before).write(to:file)
+        XCTAssertEqual(try LibraryImport.previewArchive(at:file)?.count,2)
+        let legacy=try DictionaryStore(path:location(),seed:false)
+        XCTAssertEqual(try legacy.importArchive(from:file)?.created,2)
+        XCTAssertEqual(try legacy.exportArchive().entries,before.entries)
+        // Reject trailing junk even after all records have been processed; roll back writes.
+        var damaged=try Data(contentsOf:file); damaged.append(Data(" garbage".utf8)); try damaged.write(to:file)
+        let empty=try DictionaryStore(path:location(),seed:false)
+        XCTAssertThrowsError(try empty.importArchive(from:file))
+        XCTAssertEqual(try empty.stats().entries,0)
+        XCTAssertThrowsError(try LibraryImport.previewArchive(at:file))
+        XCTAssertThrowsError(try store.exportArchive(to:URL(fileURLWithPath:path)))
+        XCTAssertEqual(try store.stats().entries,2)
+        // Ordinary notes continue through the existing import path.
+        try Data("{\"entries\":[{\"title\":\"普通笔记\",\"summary\":\"解释\"}]}".utf8).write(to:file)
+        XCTAssertNil(try LibraryImport.previewArchive(at:file))
+        XCTAssertNil(try empty.importArchive(from:file))
+        XCTAssertEqual(try empty.stats().entries,0)
+        // An archive's optional metadata may contain nested values without changing parsing.
+        let encoded=try LibraryJSON.encoder().encode(before)
+        var object=try JSONSerialization.jsonObject(with:encoded) as! [String:Any]
+        object["futureMetadata"]=["quoted":"\\\"}],[", "nested":[true,false]] as [String:Any]
+        try JSONSerialization.data(withJSONObject:object).write(to:file)
+        XCTAssertEqual(try LibraryImport.previewArchive(at:file)?.count,2)
+        // Repeated root keys must not permit a partial/ambiguous restore.
+        try Data("{\"entries\":[],\"entries\":[],\"schemaVersion\":1,\"collections\":[],\"exportedAt\":\"2026-01-01T00:00:00Z\"}".utf8).write(to:file)
+        XCTAssertThrowsError(try empty.importArchive(from:file))
+    }
     private func location() -> String {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent("zhijian-tests-\(UUID().uuidString)")
         addTeardownBlock { try? FileManager.default.removeItem(at: folder) }
@@ -241,6 +289,7 @@ private final class DictionaryCoreTests: XCTestCase {
 
 private let suite = DictionaryCoreTests()
 let checks: [(String, () throws -> Void)] = [
+    ("Streaming archives, legacy files, buffer boundaries, preview and rollback",suite.testStreamingArchiveFiles),
     ("Portable reading state, restart, sorting and library isolation",suite.testReadingStateIsolationSortingAndRestart),
     ("Anchored pagination respects collection, search, filters and deletion",suite.testAnchoredPaginationRespectsFiltersAndMissingEntries),
     ("Persistence and Unicode/escaped search", suite.testPersistenceAndUnicodeSearch),

@@ -1,0 +1,62 @@
+{
+  "entry_count": 10000,
+  "platform": "macOS-26.4.1-arm64-arm-64bit-Mach-O",
+  "binary_sha256": "ca6fc8ea18e30848e971437bcb532f469dca9d00a94c70f487c756facff058a9",
+  "profiles": {
+    "standard": {
+      "backup_mb": 16.7,
+      "setup_import": {
+        "seconds": 1.732,
+        "peak_rss_mb": 131.53
+      },
+      "export": {
+        "seconds": 0.473,
+        "peak_rss_mb": 140.25
+      },
+      "restore": {
+        "seconds": 1.655,
+        "peak_rss_mb": 132.33
+      },
+      "all_entry_and_collection_fields_equal": true,
+      "source_history_count": 3,
+      "restored_history_count": 1
+    },
+    "long_content": {
+      "backup_mb": 157.82,
+      "setup_import": {
+        "seconds": 9.349,
+        "peak_rss_mb": 501.12
+      },
+      "export": {
+        "seconds": 1.625,
+        "peak_rss_mb": 959.07
+      },
+      "restore": {
+        "seconds": 10.307,
+        "peak_rss_mb": 505.48
+      },
+      "all_entry_and_collection_fields_equal": true,
+      "source_history_count": 3,
+      "restored_history_count": 1
+    }
+  },
+  "checks": [
+    "title_conflict: rejected with full rollback",
+    "dangling_relation: rejected with full rollback",
+    "invalid_revision: rejected with full rollback",
+    "invalid_collection: rejected with full rollback",
+    "duplicate_ids: rejected with full rollback",
+    "unsupported_version: rejected with full rollback",
+    "truncated_json: rejected with no changes",
+    "same_id: local changes preserved on repeat import",
+    "seeded_destination: initial examples retained, not an exact restore"
+  ],
+  "limitations": [
+    "Historical changes are not exported; restore creates one import history record per entry.",
+    "Reading position and app preferences are absent from LibraryArchive (source inspection).",
+    "UI preview rejects UTF-8 input above 64000000 bytes (source inspection; no UI automation).",
+    "Measurements use local packaged CLI and separate temporary libraries, not two physical computers."
+  ],
+  "seeded_destination_extra_entries": 20,
+  "user_library_touched": false
+}

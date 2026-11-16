@@ -370,6 +370,16 @@ final class AppModel: ObservableObject {
             await refresh(); notify("恢复 \(result.created) 个词条，保留 \(result.skipped) 个已有词条"); return true
         } catch { self.error = error.localizedDescription; return false }
     }
+    func importArchiveFile(_ url: URL) async -> Bool {
+        guard let store, !isSaving else { return false }; isSaving = true
+        defer { isSaving = false }
+        do {
+            guard let result = try await background({ try store.importArchive(from: url) }) else {
+                throw LibraryError.invalid("请选择知间 JSON 备份文件。")
+            }
+            await refresh(); notify("恢复 \(result.created) 个词条，保留 \(result.skipped) 个已有词条"); return true
+        } catch { self.error = error.localizedDescription; return false }
+    }
     func notify(_ message: String) {
         toastTask?.cancel(); toast = message
         toastTask = Task { try? await Task.sleep(nanoseconds:3_000_000_000); if !Task.isCancelled { toast = nil } }

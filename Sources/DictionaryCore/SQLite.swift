@@ -5,6 +5,7 @@ enum SQLValue { case text(String), int(Int), double(Double), null }
 
 final class SQLiteConnection {
     private var db: OpaquePointer?
+    private var statements: [String: OpaquePointer] = [:]
     init(path: String) throws {
         if path != ":memory:" {
             try FileManager.default.createDirectory(at: URL(fileURLWithPath: path).deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -19,18 +20,32 @@ final class SQLiteConnection {
         try execute("PRAGMA synchronous=NORMAL")
         try execute("PRAGMA foreign_keys=ON")
     }
-    deinit { if let db { sqlite3_close(db) } }
+    deinit {
+        for statement in statements.values { sqlite3_finalize(statement) }
+        if let db { sqlite3_close(db) }
+    }
+
+    private func recycle(_ statement: OpaquePointer, for sql: String) {
+        sqlite3_reset(statement); sqlite3_clear_bindings(statement)
+        if statements.count < 64, statements[sql] == nil { statements[sql] = statement }
+        else { sqlite3_finalize(statement) }
+    }
 
     func execute(_ sql: String, _ values: [SQLValue] = []) throws {
-        let statement = try prepare(sql, values); defer { sqlite3_finalize(statement) }
+        let statement = try prepare(sql, values); defer { recycle(statement, for: sql) }
         var code = sqlite3_step(statement)
         while code == SQLITE_ROW { code = sqlite3_step(statement) }
         guard code == SQLITE_DONE else { throw error() }
     }
 
     func rows(_ sql: String, _ values: [SQLValue] = []) throws -> [[String: String]] {
-        let statement = try prepare(sql, values); defer { sqlite3_finalize(statement) }
         var result: [[String: String]] = []
+        try forEachRow(sql, values) { result.append($0) }
+        return result
+    }
+
+    func forEachRow(_ sql: String, _ values: [SQLValue] = [], _ body: ([String: String]) throws -> Void) throws {
+        let statement = try prepare(sql, values); defer { recycle(statement, for: sql) }
         var code = sqlite3_step(statement)
         while code == SQLITE_ROW {
             var row: [String: String] = [:]
@@ -39,10 +54,9 @@ final class SQLiteConnection {
                     row[String(cString: sqlite3_column_name(statement, column))] = String(cString: pointer)
                 }
             }
-            result.append(row); code = sqlite3_step(statement)
+            try body(row); code = sqlite3_step(statement)
         }
         guard code == SQLITE_DONE else { throw error() }
-        return result
     }
 
     func scalar(_ sql: String, _ values: [SQLValue] = []) throws -> Int {
@@ -61,8 +75,11 @@ final class SQLiteConnection {
         catch { try? execute("ROLLBACK"); throw error }
     }
     private func prepare(_ sql: String, _ values: [SQLValue]) throws -> OpaquePointer {
-        var statement: OpaquePointer?
-        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK, let statement else { throw error() }
+        var prepared = statements.removeValue(forKey: sql)
+        if prepared == nil {
+            guard sqlite3_prepare_v2(db, sql, -1, &prepared, nil) == SQLITE_OK else { throw error() }
+        }
+        guard let statement = prepared else { throw error() }
         let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
         for (offset, value) in values.enumerated() {
             let index = Int32(offset + 1)

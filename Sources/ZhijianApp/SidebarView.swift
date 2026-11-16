@@ -25,7 +25,7 @@ struct SidebarView: View {
                 Image(systemName:"magnifyingglass").foregroundStyle(Palette.secondary)
                 TextField("找阅读集…",text:$model.collectionSearch).textFieldStyle(.plain).font(.system(size:11)).accessibilityLabel("搜索阅读集")
                 if !model.collectionSearch.isEmpty {
-                    Button { model.collectionSearch="" } label: { Image(systemName:"xmark.circle.fill") }.buttonStyle(.plain).foregroundStyle(Palette.secondary).help("清空阅读集搜索")
+                    Button { model.collectionSearch="" } label: { Image(systemName:"xmark.circle.fill") }.buttonStyle(.plain).pointingHandCursor().foregroundStyle(Palette.secondary).help("清空阅读集搜索")
                 }
             }.padding(8).background(Palette.paper,in:RoundedRectangle(cornerRadius:7))
             HStack {
@@ -39,7 +39,7 @@ struct SidebarView: View {
                         }
                     }
                 } label: { Label(model.collectionOrder.label,systemImage:"arrow.up.arrow.down").font(.system(size:10)) }
-                    .menuStyle(.borderlessButton).fixedSize().help("阅读集排序")
+                    .menuStyle(.borderlessButton).pointingHandCursor().fixedSize().help("阅读集排序")
             }.padding(.top,9).padding(.bottom,7)
             ScrollViewReader { proxy in
             ScrollView {
@@ -55,7 +55,7 @@ struct SidebarView: View {
                                 Spacer(minLength:0)
                             }.padding(.horizontal,10).padding(.vertical,11).frame(maxWidth:.infinity,alignment:.leading)
                                 .background(model.section == .collection(collection.id) ? Palette.selection : Color.clear,in:RoundedRectangle(cornerRadius:8))
-                        }.buttonStyle(.plain).help(collection.title).id(collection.id)
+                        }.buttonStyle(.plain).pointingHandCursor().help(collection.title).id(collection.id)
                     }
                     if model.visibleCollections.isEmpty {
                         Text(model.collectionSearch.isEmpty ? "导入笔记，建立第一个阅读集。":"没有找到阅读集，试试其他关键词。")
@@ -91,6 +91,6 @@ struct SidebarView: View {
                 Spacer()
             }.padding(.horizontal,10).padding(.vertical,10).contentShape(Rectangle())
                 .background(model.section == section ? Palette.selection : Color.clear,in:RoundedRectangle(cornerRadius:7))
-        }.buttonStyle(.plain).accessibilityLabel(title)
+        }.buttonStyle(.plain).pointingHandCursor().accessibilityLabel(title)
     }
 }

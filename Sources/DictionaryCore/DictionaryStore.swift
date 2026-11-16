@@ -342,6 +342,64 @@ public final class DictionaryStore: @unchecked Sendable {
         return ImportResult(created: planned.count, skipped: skipped, collectionID: collectionID)
     }
 
+    /// File migration streams stored JSON without materializing or re-encoding the whole library.
+    @discardableResult public func exportArchive(to url: URL) throws -> Int {
+        let destination = url.standardizedFileURL.resolvingSymlinksInPath().path
+        let database = URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath().path
+        guard ![database, database + "-wal", database + "-shm"].contains(destination) else {
+            throw LibraryError.invalid("备份文件不能覆盖正在使用的词库。")
+        }
+        return try locked { try db.readTransaction {
+            let writer = try ArchiveWriter(url)
+            let exportedAt = String(decoding: try LibraryJSON.encoder().encode(Date()), as: UTF8.self)
+            try writer.write("{\"schemaVersion\":1,\"exportedAt\":\(exportedAt),\"entries\":[")
+            var count = 0
+            try db.forEachRow("SELECT payload FROM entries ORDER BY rowid") { row in
+                if count > 0 { try writer.write(",") }
+                try writer.write(row["payload"]!); count += 1
+            }
+            try writer.write("],\"collections\":[")
+            var first = true
+            try db.forEachRow("SELECT payload FROM collections ORDER BY rowid") { row in
+                if !first { try writer.write(",") }; first = false
+                try writer.write(row["payload"]!)
+            }
+            try writer.write("]}\n")
+            try writer.finish()
+            return count
+        } }
+    }
+
+    /// nil indicates an ordinary notes file. Archive failures always roll back the entire import.
+    public func importArchive(from url: URL, actor: String = "restore-backup") throws -> ImportResult? {
+        do {
+            return try locked { try db.transaction {
+                var created = 0, skipped = 0
+                let existing = Set(try db.rows("SELECT id FROM entries").compactMap { $0["id"] })
+                var incoming = Set<String>(), relations: [String] = [], collections: [ReadingCollection] = []
+                try ArchiveFile.read(url, entry: { original in
+                    var e = original
+                    guard !e.id.isEmpty, e.id.count <= 200, incoming.insert(e.id).inserted else {
+                        throw LibraryError.invalid("备份包含重复或无效的词条 ID。")
+                    }
+                    e.content = try e.content.validated(); e.content.id = e.id
+                    if existing.contains(e.id) { skipped += 1; return }
+                    if e.deletedAt == nil { try validateTitle(e.title, excluding: e.id) }
+                    guard e.revision > 0, !e.content.relatedIDs.contains(e.id) else { throw LibraryError.invalid("备份中的版本或关联关系无效。") }
+                    relations.append(contentsOf: e.content.relatedIDs)
+                    try save(e, action: "import-backup", actor: actor); created += 1
+                }, collection: { collections.append($0) })
+                let allIDs = existing.union(incoming)
+                guard relations.allSatisfy({ allIDs.contains($0) }) else { throw LibraryError.invalid("备份中的关联关系无效。") }
+                for collection in collections {
+                    guard collection.entryIDs.allSatisfy({ allIDs.contains($0) }) else { throw LibraryError.invalid("阅读集包含不存在的词条。") }
+                    if try db.scalar("SELECT COUNT(*) FROM collections WHERE id=?", [.text(collection.id)]) == 0 { try saveCollection(collection) }
+                }
+                return ImportResult(created: created, skipped: skipped, collectionID: collections.first?.id)
+            } }
+        } catch ArchiveFileError.notArchive { return nil }
+    }
+
     public func exportArchive(includeTrash: Bool = true) throws -> LibraryArchive {
         try locked { try db.readTransaction {
             // The explicit backup/export operation may stream the whole library; normal UI operations never do.

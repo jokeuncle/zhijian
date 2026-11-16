@@ -30,7 +30,7 @@ struct QuietIconButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) { Image(systemName: symbol).font(.system(size: 15, weight: .regular)).frame(width: 30, height: 30).contentShape(Rectangle()) }
-            .buttonStyle(.plain).foregroundStyle(active ? Palette.accent : Palette.secondary)
+            .buttonStyle(.plain).pointingHandCursor().foregroundStyle(active ? Palette.accent : Palette.secondary)
             .help(label).accessibilityLabel(label)
     }
 }
@@ -47,7 +47,7 @@ struct MossButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var enabled
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.font(.system(size: 13, weight: .medium)).padding(.horizontal, 17).padding(.vertical, 10)
-            .foregroundStyle(Palette.onAccent).background(Palette.accent.opacity(enabled ? (configuration.isPressed ? 0.8 : 1) : 0.4), in: RoundedRectangle(cornerRadius: 8))
+            .foregroundStyle(Palette.onAccent).background(Palette.accent.opacity(enabled ? (configuration.isPressed ? 0.8 : 1) : 0.4), in: RoundedRectangle(cornerRadius: 8)).pointingHandCursor()
     }
 }
 

@@ -233,6 +233,8 @@ MossButtonStyle uses medium system text (13pt), horizontal padding (17pt), verti
 
 QuietIconButton is a plain SF Symbol button with a square interaction frame (30 × 30pt), secondary color at rest and accent color when active. Its label is provided to help and accessibility. Preserve native keyboard and focus behavior; no custom focus-ring token is defined. The note-save action uses the native small bordered button.
 
+Enabled buttons, menu triggers, navigation rows, path markers, concept links and disclosure headers show a pointing-hand cursor over their interaction area. Disabled controls use the default cursor; expanded reading content and text inputs keep native text selection. `pointingHandCursor()` uses the system pointer style on macOS 15 and later, with AppKit cursor rectangles for macOS 14, avoiding global cursor push/pop state. Disclosure headers expose expansion state and keep their content outside the cursor region.
+
 ### Search and Index Navigation
 
 The search field combines a magnifier, a plain TextField, and either the empty-state Command-F hint or a clear action. It uses the paper surface, control radius, control-inset padding and the fine field stroke. Programmatic search focus is connected to FocusState. Filtering stays in the native menu beside the entry count; loading replaces the entry count with the current search status. Entry totals appear only beside this filter; navigation rows and heading copy do not repeat them. Generic index footer and introductory slogans are omitted.
